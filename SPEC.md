@@ -18,6 +18,7 @@ Expressions can be bound to variables using the _:=_ operator. This will evaluat
 
 Specifying the arity of the function, with the _::_ operator, will control the number of entries to the symbol table.
 Omitting this will cause the compiler to generate one entry per bound variable (plus one for the symbol itself).
+Note that this is really only useful when you want to restrict the user, by throwing an error when a combinator is not found in the symbol table.
 
 ```
 x := λ 0         :: 1
@@ -88,8 +89,6 @@ Alternatively, expressions can be written in Unlambda using the _UNL_ function.
 UNL{```.H.i.!i}
 ```
 
-Inside _UNL_, numbers are not interpreted as de Bruijn indices but as characters. Indices are marked with SKID-marks.
-
 ### Example
 
 ```
@@ -100,5 +99,5 @@ foo   := kComb{CHR{y}, CHR{n}} :: 0
 print{foo}
 ```
 
-This evaluates to _"`.yi"_, in Unlambda. Which prints "y".
+This evaluates to "\`.yi", in Unlambda. Which prints "y".
 
