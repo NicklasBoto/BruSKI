@@ -38,11 +38,11 @@ This would be evaluated to the symbol table:
 
 | Variable Name | Unλ expression |
 |---------------|----------------|
-| kComb         | k              |
-| kCombf        | \`k            |
-| kCombff       | \`\`k          |
+| \_\_kComb     | k              |
+| f\_\_kComb    | \`k            |
+| ff\_\_kComb   | \`\`k          |
 
-In the expression _λλ1_ is bound to the name kComb and is given two applications kCombf and kCombff (due to the 2 assignment)
+In this expression, _λλ1_ is bound to the name kComb and is given two applications kCombf and kCombff (due to the 2 assignment)
 
 ### Application
 
