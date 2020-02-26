@@ -12,12 +12,6 @@ Expressions are written in de Bruijn indexed lambda calculus. A variable is repr
 | λa.λb.a            | λλ 1          |
 | λx.x               | λ 0           |
 
-Alternatively, expressions can be written in unlambda using the _UNL_ function.
-
-```
-UNL{```.H.i.!i}
-```
-
 ### Variables
 
 Expressions can be bound to variables using the _:=_ operator. This will evaluate the expression and place it in a symbol table (explained below). 
@@ -51,7 +45,7 @@ In the expression _λλ1_ is bound to the name kComb and is given two applicatio
 
 ### Application
 
-Functions are applied using the following notation:
+Functions are called by their name, with their arguments enclosed in curly brackets.
 
 ```
 FUNC_NAME{VAR1, VAR2, ...}
@@ -59,4 +53,52 @@ FUNC_NAME{VAR1, VAR2, ...}
 
 Note that the number of variables are free to vary, as long as it is less than or equal to the arity of the function.
 Not applying the full amount of arguments will result in partial application, and another function is returned.
+
+Using indices as arguments is done by denoting them with the symbol _%_, called a SKID-mark. 
+
+```
+λλ FUNC_NAME{%0, %1, ...}
+```
+
+### Built-ins
+
+Some built-in "syntactic sugar" functions are included, for ease of use. These include functions for encoding types in lambda expressions and language conversions to Unlambda.
+
+#### INT
+
+_INT_ converts natural numbers to and from their church encoding.
+
+```
+INT{2} => λ ζ{ζ{%0}} => λ ζ (ζ 0)
+```
+
+#### CHR
+
+_CHR_ encodes a character similar to a church encoding. With 'a' being 0, 'b' being '1', and so on. Capital letters are 29 and onward.
+
+```
+CHR{c} => λ ξ{ξ{ξ{%0}}} => λ ξ (ξ (ξ 0))
+```
+
+#### UNL
+
+Alternatively, expressions can be written in Unlambda using the _UNL_ function.
+
+```
+UNL{```.H.i.!i}
+```
+
+Inside _UNL_, numbers are not interpreted as de Bruijn indices but as characters. Indices are marked with SKID-marks.
+
+### Example
+
+```
+kComb := λλ 1                  :: Binary
+print := λ UNL{`.%0i}          :: Unary
+foo   := kComb{CHR{y}, CHR{n}} :: Nullary 
+
+print{foo}
+```
+
+This evaluates to _"`.yi"_, in Unlambda. Which prints "y".
 
