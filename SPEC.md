@@ -91,22 +91,27 @@ UNL{```.H.i.!i}
 
 ### Comments
 
-The character _;_ (semicolon) denotes comments. Inline comments use the symbol  _;;_, called a SKID-row.
+The character _;_ (semicolon) denotes comments. Inline comments use the symbol  _;* / *;_.
 
 ```
 ; Ooga booga
-kComb ;; the K-combinator ;; := λλ 1 :: 2
+kComb ;* the K-combinator *; := λλ 1 :: 2
 ```
 
 ### Example
 
 ```
+; Stupid complicated way of printing
+
 kComb := λλ 1                  :: 2
 print := λ UNL{`.%0i}          :: 1
 foo   := kComb{CHR{y}, CHR{n}} :: 0 
 
 print{foo}
-```
 
-This evaluates to "\`.yi", in Unlambda. Which prints "y".
+;*
+This evaluates to "\`.yi", in Unlambda.
+Which prints "y".
+*;
+```
 
