@@ -16,13 +16,13 @@ Expressions are written in de Bruijn indexed lambda calculus. A variable is repr
 
 Expressions can be bound to variables using the _:=_ operator. This will evaluate the expression and place it in a symbol table (explained below). 
 
-Specifying the arity of the function will control the number of entries to the symbol table.
+Specifying the arity of the function, with the _::_ operator, will control the number of entries to the symbol table.
 Omitting this will cause the compiler to generate one entry per bound variable (plus one for the symbol itself).
 
 ```
-x := λ 0         :: Unary
-y := λλ 0        :: Binary
-z := λλλ 0 (2 3) :: Tertiary
+x := λ 0         :: 1
+y := λλ 0        :: 2
+z := λλλ 0 (2 3) :: 3
 ```
 
 ### Evaluation
@@ -41,7 +41,7 @@ This would be evaluated to the symbol table:
 | kCombf        | \`k            |
 | kCombff       | \`\`k          |
 
-In the expression _λλ1_ is bound to the name kComb and is given two applications kCombf and kCombff (due to the Binary assignment)
+In the expression _λλ1_ is bound to the name kComb and is given two applications kCombf and kCombff (due to the 2 assignment)
 
 ### Application
 
@@ -93,9 +93,9 @@ Inside _UNL_, numbers are not interpreted as de Bruijn indices but as characters
 ### Example
 
 ```
-kComb := λλ 1                  :: Binary
-print := λ UNL{`.%0i}          :: Unary
-foo   := kComb{CHR{y}, CHR{n}} :: Nullary 
+kComb := λλ 1                  :: 2
+print := λ UNL{`.%0i}          :: 1
+foo   := kComb{CHR{y}, CHR{n}} :: 0 
 
 print{foo}
 ```
