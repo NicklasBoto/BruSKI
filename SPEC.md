@@ -89,6 +89,15 @@ Alternatively, expressions can be written in Unlambda using the _UNL_ function.
 UNL{```.H.i.!i}
 ```
 
+### Comments
+
+The character _;_ (semicolon) denotes comments. Inline comments use the symbol  _;;_, called a SKID-row.
+
+```
+; Ooga booga
+kComb ;; the K-combinator ;; := λλ 1 :: 2
+```
+
 ### Example
 
 ```
