@@ -78,7 +78,7 @@ INT{2} => λ ζ{ζ{%0}} => λ ζ (ζ 0)
 _CHR_ encodes a character similar to a church encoding. With 'a' being 0, 'b' being '1', and so on. Capital letters are 29 and onward.
 
 ```
-CHR{c} => λ ξ{ξ{ξ{%0}}} => λ ξ (ξ (ξ 0))
+CHR{d} => λ ξ{ξ{ξ{%0}}} => λ ξ (ξ (ξ 0))
 ```
 
 #### UNL
@@ -110,7 +110,7 @@ foo   := kComb{CHR{y}, CHR{n}} :: 0
 print{foo}
 
 ;*
-This evaluates to "\`.yi", in Unlambda.
+This evaluates to "`.yi", in Unlambda.
 Which prints "y".
 *;
 ```
