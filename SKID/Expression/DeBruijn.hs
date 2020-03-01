@@ -1,10 +1,11 @@
-module DeBruijn
-        ( Bλ (Idx, Abs, App)
+module Expression.DeBruijn
+        ( Bλ (Idx, Abs, App, Unl)
         ) where
 
 data Bλ = Idx Int
         | Abs Bλ
         | App Bλ Bλ
+        | Unl String
         deriving Show
 
         {-
