@@ -1,10 +1,10 @@
-module Parser
-        (
+module Expression.Parser
+        ( parseExpression
         ) where
 
 import Data.Char
 import Text.Parsec
-import DeBruijn
+import Expression.DeBruijn
 
 parseExpression :: String -> Bλ
 parseExpression = handleBλ . parse tryBλ "parseExpression" . uncomment
@@ -12,21 +12,14 @@ parseExpression = handleBλ . parse tryBλ "parseExpression" . uncomment
 handleBλ :: Either ParseError Bλ -> Bλ
 handleBλ = either (error . ("\nParse Error in " ++) . show) id 
 
--- Abs (Abs (Idx 1))
--- λ    (λ  (    1))
--- λλ 1
-
--- Abs (Abs (Abs (App (App (Idx 2) (Idx 0)) (App (Idx 1) (Idx 0)))))
--- λλλ (2 0) (1 0) 
---
--- SWISHA MASSA PENGAR
-
 tryBλ =  try (space    *> tryBλ)
      <|> try (char ')' *> tryBλ)
      <|> try (char '(' *> (App <$> tryBλ <*> tryBλ))
      <|> try (char 'λ' *> (Abs <$> tryBλ))
+     <|> try (string "UNL{" *> (Unl <$> manyTill anyChar (try (char '}'))))
      <|> try (Idx . (\x -> read x :: Int) <$> (manyTill digit (notFollowedBy digit)))
-  -- <|> try (eof *> ???
+
+  -- There has got to be a better way to do this!
 
 uncomment :: String -> String
 uncomment []           = []
