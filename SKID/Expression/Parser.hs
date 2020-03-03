@@ -6,6 +6,8 @@ import Data.Char
 import Text.Parsec
 import DeBruijn
 
+p = parseExpression
+
 parseExpression :: String -> Bλ
 parseExpression = handleBλ . parse tryBλ "parseExpression" . uncomment
 
@@ -14,7 +16,7 @@ handleBλ = either (error . ("\nParse Error in " ++) . show) id
 
 tryBλ =  try (space         *> tryBλ)
      <|> try (string "UNL{" *> (Unl <$> manyTill anyChar (try (char '}'))))
-     <|> try (string "INT{" *> (encodeChurch <$> manyTill digit (char '}')))
+     <|> try (string "INT{" *> (encode toInt <$> manyTill digit (char '}')))
      <|> try (string "CHR{" *> (encodeChar <$> anyChar))
      <|> try (char ')'      *> tryBλ)
      <|> try (char '('      *> (App <$> tryBλ <*> tryBλ))
@@ -32,10 +34,10 @@ encodeChar = encode ord
 encode :: (a -> Int) -> a -> Bλ
 encode f c = Abs $ iterate (App Enc) (Idx 0) !! (f c)
 
-decodeChurch :: Bλ -> Int
-decodeChurch (Idx 0)     = 0
-decodeChurch (App Enc b) = 1 + decodeChurch b
-decodeChurch (Abs b)     = decodeChurch b 
+decode :: Bλ -> Int
+decode (Idx 0)     = 0
+decode (App Enc b) = 1 + decode b
+decode (Abs b)     = decode b 
 
 toInt :: String -> Int
 toInt = read
