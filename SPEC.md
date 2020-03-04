@@ -1,6 +1,6 @@
 ## BruSKI, DeBruijn to SKI
 
-BruSKI uses variable abstraction and lambda notation that evaluates to Unlambda.
+BruSKI (p. brew-ski) uses variable abstraction and lambda notation that evaluates to Unlambda.
 
 ### Expressions
 
