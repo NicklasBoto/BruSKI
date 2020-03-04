@@ -1,9 +1,9 @@
-# SKID
-"SKI with Delimiters" Untyped language that compiles to Unlambda
+# BruSKI
+"DeBruijn to SKI" Untyped language that compiles to Unlambda
 
 ## Specification
 
-SKID uses variable abstraction and lambda notation that evaluates to Unlambda.
+BruSKI uses variable abstraction and lambda notation that evaluates to Unlambda.
 
 ### Expressions
 
@@ -58,7 +58,7 @@ FUNC_NAME{VAR1, VAR2, ...}
 Note that the number of variables are free to vary, as long as it is less than or equal to the arity of the function.
 Not applying the full amount of arguments will result in partial application, and another function is returned.
 
-Using indices as arguments is done by denoting them with the symbol _%_, called a SKID-mark. 
+Using indices as arguments is done by denoting them with the symbol _%_, called a SKID-mark (which of course means SKI delimiter). 
 
 ```
 λλ FUNC_NAME{%0, %1, ...}
