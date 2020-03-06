@@ -44,16 +44,3 @@ indexRead :: String -> Bλ
 indexRead s = case readEither s of
                 Left  e -> error $ "Index Parse Error (Probably a non-integer index)\n" ++ show e
                 Right r -> Idx r
-
-uncomment :: String -> String
-uncomment []           = []
-uncomment (';':'*':cs) = uncomment (dropUntil (/=';' ) cs)
-uncomment (';':cs)     = uncomment (dropUntil (/='\n') cs)
-uncomment (c  :cs)     = c : uncomment cs
-
-dropUntil :: (a -> Bool) -> [a] -> [a]
-dropUntil _ [] =  []
-dropUntil p (x:xs)
-            | p x = dropUntil p xs
-            | otherwise =  xs
-
