@@ -1,15 +1,20 @@
-module Parser
+module Expression.Parser
         ( parseExpression
+        , tryBλ
         ) where
 
+---- Text Import
 import Data.Char
-import Text.Parsec
-import DeBruijn
+import Text.Read
 
-p = parseExpression
+---- Parsing Import
+import Text.Parsec
+
+---- AST Import
+import Expression.DeBruijn
 
 parseExpression :: String -> Bλ
-parseExpression = handleBλ . parse tryBλ "parseExpression" . uncomment
+parseExpression = handleBλ . parse tryBλ "parseExpression"
 
 handleBλ :: Either ParseError Bλ -> Bλ
 handleBλ = either (error . ("\nParse Error in " ++) . show) id 
@@ -17,19 +22,12 @@ handleBλ = either (error . ("\nParse Error in " ++) . show) id
 tryBλ =  try (space         *> tryBλ)
      <|> try (string "UNL{" *> (Unl <$> manyTill anyChar (try (char '}'))))
      <|> try (string "INT{" *> (encode toInt <$> manyTill digit (char '}')))
-     <|> try (string "CHR{" *> (encodeChar <$> anyChar))
+     <|> try (string "CHR{" *> (encode ord   <$> anyChar))
      <|> try (char ')'      *> tryBλ)
      <|> try (char '('      *> (App <$> tryBλ <*> tryBλ))
      <|> try (char 'λ'      *> (Abs <$> tryBλ))
-     <|> try (Idx . toInt <$> manyTill digit (notFollowedBy digit))
-                        -- ^                  ^^^^^^^^^^^^^^ Reduce this..
-                        -- | move this to separate function, with error handling
+     <|> try (indexRead <$> many1 digit)
 
-encodeChurch :: String -> Bλ
-encodeChurch = encode toInt
-
-encodeChar :: Char -> Bλ
-encodeChar = encode ord
 
 encode :: (a -> Int) -> a -> Bλ
 encode f c = Abs $ iterate (App Enc) (Idx 0) !! (f c)
@@ -41,6 +39,11 @@ decode (Abs b)     = decode b
 
 toInt :: String -> Int
 toInt = read
+
+indexRead :: String -> Bλ
+indexRead s = case readEither s of
+                Left  e -> error $ "Index Parse Error (Probably a non-integer index)\n" ++ show e
+                Right r -> Idx r
 
 uncomment :: String -> String
 uncomment []           = []
