@@ -15,9 +15,9 @@ Expressions are written in de Bruijn indexed lambda calculus. A variable is repr
 | λa.λb.a            | λλ 1          |
 | λx.x               | λ 0           |
 
-### Variables
+### Assignment
 
-Expressions can be bound to variables using the _:=_ operator. This will evaluate the expression and place it in a symbol table (explained below). 
+Expressions can be assigned to identifiers using the _:=_ operator. This will evaluate the expression and place it in a symbol table (explained below). 
 
 Specifying the arity of the function, with the _::_ operator, will control the number of entries to the symbol table.
 Omitting this will cause the compiler to generate one entry per bound variable (plus one for the symbol itself).
@@ -64,13 +64,30 @@ Using indices as arguments is done by denoting them with the symbol _%_, called 
 λλ FUNC_NAME{%0, %1, ...}
 ```
 
+### The (!!) operator
+
+Expressions written after the (!!) operator will be evaluated and interpreted by the Unlambda interpreter, and will be the output of the program. Expressions written like this on multiple rows will be concatenated and evaluated as one.
+
+```
+plus := λλ (0 1)
+one  := INT{1}
+two  := INT{2}
+
+!! plus{one, two}
+
+;*
+This will evaluate to
+λ ζ (ζ (ζ (0)) --UNL-> `.3i
+*;
+```
+
 ### Built-ins
 
 Some built-in "syntactic sugar" functions are included, for ease of use. These include functions for encoding types in lambda expressions and language conversions to Unlambda.
 
 #### INT
 
-_INT_ converts natural numbers to and from their church encoding.
+_INT_ converts natural numbers to their church encoding.
 
 ```
 INT{2} => λ ζ{ζ{%0}} => λ ζ (ζ 0)
@@ -110,7 +127,7 @@ kComb := λλ 1                  :: 2
 print := λ UNL{`.%0i}          :: 1
 foo   := kComb{CHR{y}, CHR{n}} :: 0 
 
-print{foo}
+!! print{foo}
 
 ;*
 This evaluates to "`.yi", in Unlambda.
