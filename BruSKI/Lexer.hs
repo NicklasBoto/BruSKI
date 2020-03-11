@@ -1,0 +1,43 @@
+module Lexer
+        (identifier
+        , reservedOp
+        , whiteSpace
+        , parens
+        , braces
+        , natural
+        , comma
+        ) where
+
+import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec.Language
+import qualified Text.ParserCombinators.Parsec.Token as Token
+
+---- Lexer Definition
+languageDef =
+   emptyDef { Token.commentStart    = ";*"
+            , Token.commentEnd      = "*;"
+            , Token.commentLine     = ";"
+            , Token.identStart      = letter
+            , Token.identLetter     = alphaNum
+            , Token.reservedNames   = ["UNL" ,"INT", "CHR", "BOL"]
+            , Token.reservedOpNames = [":=", "!!", "::", "λ", "%"]
+            , Token.caseSensitive   = True
+            }
+
+-- This saved my life
+lexer = Token.makeTokenParser languageDef
+
+identifier, comma :: Parser String
+parens, braces    :: Parser a -> Parser a
+reservedOp        :: String -> Parser ()
+whiteSpace        :: Parser ()
+natural           :: Parser Integer
+
+identifier = Token.identifier lexer
+reservedOp = Token.reservedOp lexer
+whiteSpace = Token.whiteSpace lexer
+parens     = Token.parens     lexer
+braces     = Token.braces     lexer
+natural    = Token.natural    lexer
+comma      = Token.comma      lexer
+
