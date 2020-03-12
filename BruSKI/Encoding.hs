@@ -4,11 +4,19 @@ module Encoding
         , countLambda
         , toInteg
         , toInt
+        , toPrint
         ) where
 
 
+---- Format Import
+import Data.List
+
 ---- Language Import
 import AST
+
+toPrint :: String -> Bλ
+toPrint s = Unl $ pr ++ '.' : intersperse '.' s ++ "i"
+        where pr = replicate (length s) '`'
 
 encode :: (a -> Int) -> a -> Bλ
 encode f c = Abs $ iterate (App Enc) (Idx 0) !! (f c)

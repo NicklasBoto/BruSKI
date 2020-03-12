@@ -1,5 +1,6 @@
 module Parser
-        (
+        ( parseString
+        , parseFile
         ) where
 
 
@@ -84,11 +85,13 @@ appExpression = do
 
 synSugar :: Parser Bλ
 synSugar =  unlP
+        <|> prtP
         <|> intP
         <|> chrP
 
 unlP, intP, chrP :: Parser Bλ
 unlP = string "UNL" *> (Unl <$> braces (many1 (noneOf "}")))
+prtP = string "PRT" *> (toPrint <$> braces (many1 (noneOf "}")))
 intP = string "INT" *> (encode toInt <$> braces (many1 digit))
 chrP = string "CHR" *> (encode ord <$> braces anyChar)
 

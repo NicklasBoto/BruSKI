@@ -19,7 +19,7 @@ languageDef =
             , Token.commentLine     = ";"
             , Token.identStart      = letter
             , Token.identLetter     = alphaNum
-            , Token.reservedNames   = ["UNL" ,"INT", "CHR", "BOL"]
+            , Token.reservedNames   = ["UNL" ,"INT", "CHR", "PRT"]
             , Token.reservedOpNames = [":=", "!!", "::", "λ", "%"]
             , Token.caseSensitive   = True
             }
