@@ -84,10 +84,7 @@ appExpression = do
         return $ App l r
 
 synSugar :: Parser Bλ
-synSugar =  unlP
-        <|> prtP
-        <|> intP
-        <|> chrP
+synSugar =  unlP <|> prtP <|> intP <|> chrP
 
 unlP, intP, chrP :: Parser Bλ
 unlP = string "UNL" *> (Unl <$> braces (many1 (noneOf "}")))
