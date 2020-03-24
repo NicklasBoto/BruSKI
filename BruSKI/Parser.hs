@@ -1,6 +1,7 @@
 module Parser
         ( parseString
         , parseFile
+        , parseExpression
         ) where
 
 
@@ -106,3 +107,8 @@ parseFile file = do
           Left  e -> print e >> fail "Parse Error"
           Right r -> return r
 
+-- This is really only for debugging and testing purposes
+parseExpression :: String -> Bλ
+parseExpression str = case parse expression "Expression Parser" str of
+                    Left  e -> error $ show e
+                    Right r -> r
