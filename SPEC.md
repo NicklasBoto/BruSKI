@@ -1,3 +1,6 @@
+# BruSKI
+"DeBruijn to SKI" Untyped language that compiles to Unlambda
+
 ## Specification
 
 BruSKI uses variable abstraction and lambda notation that evaluates to Unlambda.
@@ -75,6 +78,7 @@ two  := INT{2}
 ;*
 This will evaluate to
 λ ζ (ζ (ζ (0)) --UNL-> `.3i
+*;
 ```
 
 ### Built-ins
@@ -91,7 +95,7 @@ INT{2} => λ ζ{ζ{%0}} => λ ζ (ζ 0)
 
 #### CHR
 
-_CHR_ encodes a character similar to a church encoding. With 'a' being 0, 'b' being '1', and so on. Capital letters are 29 and onward.
+_CHR_ encodes a character like the Church encoding with its ASCII value being encoded. Note the use of a different successor function ξ, as this encoding is treated differently by the compiler.
 
 ```
 CHR{d} => λ ξ{ξ{ξ{%0}}} => λ ξ (ξ (ξ 0))
@@ -103,6 +107,14 @@ Alternatively, expressions can be written in Unlambda using the _UNL_ function.
 
 ```
 UNL{```.H.i.!i}
+```
+
+#### PRT
+
+Instead of writing the _.x_ unlambda operator in the _UNL_ function, you can use _PRT_ with a string. This string will be converted to an Unlambda function printing it.
+
+```
+PRT{BruSKI} => UNL{``````.B.r.u.S.K.Ii}
 ```
 
 ### Comments
