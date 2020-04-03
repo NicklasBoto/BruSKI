@@ -4,6 +4,11 @@ module Parser
         , parseExpression
         ) where
 
+{-
+It always makes me so happy,
+when you find someone alive.
+    - Alaska State Troopers S4 E16
+-}
 
 ---- Format Import
 import Data.Char
