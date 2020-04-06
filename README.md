@@ -3,14 +3,19 @@
 Haskell project that aims to show that small abstractions to lambda calculus yield a surprisingly useful language.
 And in some part for me to investigate my interest in the interface between lambda calculus and combinator calculus.
 
-## WIP
+## Workflow
 - [x] [Specification](SPEC.md)
 - [x] [Abstract Syntax Tree](BruSKI/AST.hs)
 - [x] [Lexer](BruSKI/Lexer.hs)
 - [x] [Parser](BruSKI/Parser.hs)
 - [x] [Syntactic Sugar / Encodings](BruSKI/Encoding.hs)
-- [ ] [Optimization / Code Generation](BruSKI/Generator.hs)
-- [ ] [Unl interpreter integration](BruSKI/Unlambda/Run.hs)
+- [x] [Lambda Translation](BruSKI/Generator.hs)
+- [x] [Code Generation](BruSKI/Generator.hs)
+- [ ] [Error Handler](BruSKI/ErrorHandler.hs)
+- [ ] [Index Escape Delimiter Handling](BruSKI/Generator.hs)
+- [ ] Symbol Table Generation / Management
+- [ ] Code Optimization
+- [ ] Unl Interpreter Integration
 
 ## Specification
 
