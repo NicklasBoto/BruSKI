@@ -27,94 +27,114 @@ import Data.Maybe
 import Control.Lens
 import Control.Applicative ((<|>))
 
+-- Stores intermediate expressions
 data Iλ = Idx1 Int
         | Abs1 Iλ
         | App1 Iλ Iλ
         | S1
         | K1
         | I1
-        | T Iλ Iλ
         deriving (Show, Eq)
 
--- Stores whether an index is free, bound, or at head redex
+-- Stores whether an index is free, bound, or at head position.
+-- Note that "head" in this context is like the haskell head,
+-- not the head redex in β-reduction.
+-- Free here means that an index counts to a binder outside of its scope,
+-- and bound means it's inside.
 data VarType = Free | Bound | Head deriving (Show, Eq)
 
-mediate :: Bλ -> Iλ
-mediate (Idx   n) = Idx1 (fromInteger n)
-mediate (Abs   λ) = Abs1 (mediate λ)
-mediate (App l r) = App1 (mediate l) (mediate r)
-mediate        _  = Idx1 0
+-- Converts from the parsed DeBruijn-expressions to their intermediate forms.
+toIλ :: Bλ -> Iλ
+toIλ (Idx   n) = Idx1 (fromInteger n)
+toIλ (Abs   λ) = Abs1 (toIλ λ)
+toIλ (App l r) = App1 (toIλ l) (toIλ r)
+toIλ        _  = Idx1 0 -- need to handle compiler specific terms
 
+-- Converts intermediate combinators to their SKI forms.
+fromIλ :: Iλ -> Aλ
+fromIλ S1 = E S
+fromIλ K1 = E K
+fromIλ I1 = E I
+fromIλ (App1 l r) = A (fromIλ l) (fromIλ r)
+
+-- Lists the indeces with their "bindedness".
+-- More on this at the VarType definition.
+inScope :: Iλ -> [VarType]
+inScope x = iS 0 x where
+    iS v (Idx1 n)   = [if n <= v-1 then if v-n-1 == 0 then Head else Bound else Free]
+    iS v (App1 l r) = iS v l ++ iS v r
+    iS v (Abs1 λ)   = iS (v+1) λ
+    iS v _          = []
+
+-- Checks if the binder at head position has any indeces bound to it, or not.
 headFree, headBound :: Iλ -> Bool
 headFree  = none (==Head) . inScope
 headBound = not . headFree
 
-{-
--- Checks if the x:th index in a Bλ-expression is bound to any λ
-isFree :: Int -> Iλ -> Maybe Bool
-isFree x λ = case inScope λ ^? element x of
-    Just y -> y == Just Head || y == Just Free
-    Nothing -> Nothing
-
-isFree' :: Int -> Iλ -> Maybe Bool
-isFree' x λ = case drop x (inScope λ) of
-    y:_ -> y == Just Head || y == Just Free
-    []  -> Nothing
--}
-
--- Similar to abstractionLevel but checks if a index N has a binder N steps away in its scope 
-inScope :: Iλ -> [VarType]
-inScope x = iS 0 x where
-    iS v (Idx1 n)                 = [if n <= v-1 then if v-n-1 == 0 then Head else Bound else Free]
-    iS v (App1 (Abs1 l) (Abs1 r)) = iS (v+1) l ++ iS (v+1) r
-    iS v (App1 (Abs1 λ) r)        = iS (v+1) λ ++ iS v r
-    iS v (App1 l (Abs1 λ))        = iS v l ++ iS (v+1) λ
-    iS v (App1 l r)               = iS v l ++ iS v r
-    iS v (Abs1 λ)                 = iS (v+1) λ
-    iS v _                        = [] 
-
--- Names the indeces in a DeBruijn-expression so that becomes equivalent to a λ-expression
--- Might not be used
-alphaName :: Iλ -> [(Char, VarType)]
-alphaName = zip ['a'..] . inScope
-
+-- Decrements all the free indeces in DeBruijn-expressions.
+-- This function is really only necessary when translating from DeBruijn.
+-- For example, the elimination:
+-- T[λx.(S I T[λy.x])] => T[λx.(S I (K T[x]))] 
+-- isn't a problem when naming variables, because they don't account for scope.
+-- But using DeBruijn indeces:
+-- T[λ(S I T[λ1])] =/> T[λ(S I 1)]
+-- The index 1 has lost one binder in its scope, so it needs to be decremented.
+-- T[λ(S I T[λ1])] => T[λ(S I 0)]
 decIndex :: Iλ -> Iλ
-decIndex (Idx1 0) = error "Index at zero"
-decIndex (Idx1 n) = Idx1 (n-1)
-decIndex       λ  = λ
+decIndex x = dI 0 x where
+    dI v (Idx1 n)   = Idx1 $ if n <= v-1 then n else n-1
+    dI v (App1 l r) = App1 (dI v l) (dI v r)
+    dI v (Abs1 λ)   = Abs1 (dI (v+1) λ)
+    dI v ski        = ski
 
-tx1 :: Iλ -> Iλ
-tx1 (Idx1 x)     = trace ("1: " ++ show (Idx1 x)) $ Idx1 x
-tx1 (App1 e1 e2) = trace ("2: " ++ show (App1 e1 e2)) $ App1 (tx1 e1) (tx1 e2)
-tx1 l@(Abs1 λ)
-    | headFree l                     = trace ("3: " ++ show l) $ App1 K1 (tx1 λ)
-    | λ == Idx1 0                    = trace ("4: " ++ show l) $ I1
-    | (Abs1 e)     <- λ, headBound l = trace ("5: " ++ show l) $ tx1 (Abs1 (tx1 λ))
-    | (App1 e1 e2) <- λ, headBound (Abs1 e1) || headBound (Abs1 e2)
-    = trace ("6: " ++ show l) $ App1 (App1 S1 (tx1 (Abs1 e1))) (tx1 (Abs1 e2))
-tx1 S1 = S1
-tx1 K1 = K1
-tx1 I1 = I1
---tx1 a  = error $ show a
+-- Translates DeBruijn λ-terms into SKI-terms by abstraction elimination.
+-- The patterns and guard patterns are commented with the respective rules found at
+-- https://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis
+-- Also note that an η-reduction rule is added to shorten the SKI expressions.
+-- Some inspiration at https://blog.ngzhian.com/ski2.html, thank you Zhi An Ng.
+-- And thanks to @VictorElHajj for some wisdom!
+translate :: Iλ -> Iλ
+translate (Idx1 x)     = Idx1 x                             -- Rule 1
+translate (App1 e1 e2) = App1 (translate e1) (translate e2) -- Rule 2
+translate l@(Abs1 λ)
+    -- η-reduction
+    -- This is essentially checking if a λ-expression can be
+    -- written "point free", in haskell terms.
+    -- Note that, by using DeBruijn indices,
+    -- we have to decrement the free indicies in λ. 
+    -- from https://en.wikipedia.org/wiki/Combinatory_logic#Simplifications_of_the_transformation
+    | App1 e1 (Idx1 _) <- λ
+    , last (inScope l) == Head && headFree (Abs1 e1)
+    = translate (decIndex e1)
+    -- Rule 3
+    -- Here too, we need to decrement.
+    -- Converts to the K combinator.
+    | headFree l 
+    = App1 K1 (translate (decIndex λ))
+    -- Rule 4
+    -- Converts to the I combinator.
+    | Idx1 0 <- λ 
+    = I1
+    -- Rule 5
+    -- Translates the body of an abstraction.
+    | Abs1 _ <- λ
+    , headBound l
+    = translate (Abs1 (translate λ))
+    -- Rule 6
+    -- Converts to the S combinator
+    | App1 e1 e2 <- λ
+    , headBound (Abs1 e1) || headBound (Abs1 e2)
+    = App1 (App1 S1 (translate (Abs1 e1))) (translate (Abs1 e2))
+-- Trivial cases
+translate S1 = S1
+translate K1 = K1
+translate I1 = I1
+translate _  = error "Not implemented!"
 
--- Fix this false poop
--- run tx1 test
-
-test3 = Abs1 (Idx1 1)
-test5 = undefined
-test = Abs1 . Abs1 $ App1 (Idx1 0) (Idx1 1)
-test' = Abs1 (App1 (Abs1 $ Idx1 0) (Idx1 0))
-
-
-{-
-tx :: Inter -> Inter
-tx (BRU x) = case x of
-    Idx n -> BRU $ Idx n
-    App l r -> T (tx $ BRU l) (tx $ BRU r)
-    Abs λ -> if not $ headFree λ then T (SKI K) (tx $ BRU λ) else error "NOP"
-    Abs (Idx 0) -> SKI I
---  Abs r@(Abs x) -> if headFree r then tx (BRU)
-    Abs (App l r) -> if headFree l || headFree r then T (T (SKI S) (tx (BRU $ Abs l))) (tx (BRU $ Abs r)) else error "NOP2"
--}
---tx1 x = 
-    
+-- Turns translated expressions to Unlambda code.
+generate :: Iλ -> String
+generate λ = g (fromIλ λ) where
+    g (E S) = "s"
+    g (E K) = "k"
+    g (E I) = "i"
+    g (A l r) = '`' : g l ++ g r
