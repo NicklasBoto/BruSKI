@@ -40,14 +40,22 @@ assignStmt = do
         reservedOp ":="
         expr <- expression
         spaces
-        arity <- getArity <|> countArity expr
+        arity <- getArity expr <|> countArity expr
         return $ Assign var expr arity
 
 countArity :: Bλ -> Parser Integer
 countArity = return . countLambda
 
-getArity :: Parser Integer
-getArity = reservedOp "::" *> natural
+getArity :: Bλ -> Parser Integer
+getArity expr = do
+    fullArity <- countArity expr
+    reservedOp "::"
+    arity <- natural
+
+    if arity > fullArity then
+        error "Parse Error\narity cannot be higher than the number of binders"
+    else
+        return arity
 
 
 ---- Compiler Specific Expression Parser (CSEP)
@@ -84,9 +92,9 @@ absExpression = reservedOp "λ" *> (Abs <$> expression)
 
 appExpression :: Parser Bλ
 appExpression = do
-        l <- parens expression
+        l <- idxExpression <|> parens expression
         spaces
-        r <- parens expression
+        r <- idxExpression <|> parens expression
         return $ App l r
 
 synSugar :: Parser Bλ
