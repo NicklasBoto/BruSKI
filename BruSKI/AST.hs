@@ -1,15 +1,18 @@
 module AST
         ( Stmt (Assign, Express, Sequent)
         , Bλ (Idx, Abs, App, Unl, Enc, Prc, Fun)
+        , Iλ (Idx1, Abs1, App1, S1, K1, I1, Unl1, D1)
         ) where
 
 ---- Format Import
 import Data.List
 
+-- Stores BruSKI epxressions
 data Stmt = Assign String Bλ Integer
           | Express Bλ
           | Sequent [Stmt]
 
+-- Stores DebBruijn expressions
 data Bλ = Idx Integer
         | Abs Bλ
         | App Bλ Bλ
@@ -19,8 +22,20 @@ data Bλ = Idx Integer
         | Fun String [Bλ]
         deriving Eq
 
+-- Stores intermediate expressions
+data Iλ = Idx1 Int
+        | Abs1 Iλ
+        | App1 Iλ Iλ
+        | S1
+        | K1
+        | I1
+        | Unl1 String
+        | D1 String
+        deriving (Show, Eq)
+
 -- App Enc (Abs (Idx 0)) == Abs (App Enc (Idx 0))
 -- Check β-equivalence (Remove abstractions, compute application) for Eq
+-- Could just check SKI variant for equality
 
 instance Show Stmt where
         show (Assign s b a) = "[" ++ s ++ " , " ++ show b ++ ", " ++ show a ++ "]"
