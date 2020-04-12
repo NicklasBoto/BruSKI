@@ -1,5 +1,8 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module AST
-        ( Stmt (Assign, Express, Sequent)
+        ( Stmt (Assign, Express)
+        , Sequence
         , Bλ (Idx, Abs, App, Unl, Enc, Prc, Fun)
         , Iλ (Idx1, Abs1, App1, S1, K1, I1, Unl1, D1)
         ) where
@@ -8,9 +11,9 @@ module AST
 import Data.List
 
 -- Stores BruSKI epxressions
-data Stmt = Assign String Bλ Integer
-          | Express Bλ
-          | Sequent [Stmt]
+data Stmt = Assign String Bλ Integer | Express Bλ
+
+type Sequence = [Stmt]
 
 -- Stores DebBruijn expressions
 data Bλ = Idx Integer
@@ -58,7 +61,9 @@ instance Show Bλ where
 instance Show Stmt where
         show (Assign s b a) = "[" ++ s ++ " , " ++ show b ++ ", " ++ show a ++ "]"
         show (Express    b) = "[!!, " ++ show b ++ "]"
-        show (Sequent    s) = intercalate "\n" $ map show s
+
+instance {-# OVERLAPPING #-} Show Sequence where
+    show = intercalate "\n" . map show
 
 instance Show Bλ where
         show (Idx x)           = show x

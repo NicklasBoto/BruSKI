@@ -22,8 +22,8 @@ import Lexer
 import AST
 
 ---- Statement Parser
-whileParser :: Parser Stmt
-whileParser = Sequent <$> manyTill sequentStatement eof
+whileParser :: Parser Sequence
+whileParser = manyTill sequentStatement eof
 
 sequentStatement :: Parser Stmt
 sequentStatement = whiteSpace *> statement
@@ -108,12 +108,12 @@ chrP = try $ string "CHR" *> (encode ord <$> braces anyChar)
 
 
 ---- User Input, Debug
-parseString :: String -> Stmt
+parseString :: String -> Sequence
 parseString str = case parse whileParser "String Parser" str of
                     Left  e -> error $ show e
                     Right r -> r
 
-parseFile :: String -> IO Stmt
+parseFile :: String -> IO Sequence
 parseFile file = do
         program <- readFile file
         case parse whileParser file program of
