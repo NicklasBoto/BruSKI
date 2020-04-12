@@ -120,16 +120,16 @@ translate (Unl1 s) = Unl1 s
 translate _  = error "Translation Error: not implemented"
 
 -- Turns translated expressions to Unlambda code.
-generate :: Iλ -> String
-generate (Unl1 s) = s
-generate λ  = g (fromIλ λ) where
+toUnl :: Iλ -> String
+toUnl (Unl1 s) = s
+toUnl λ  = g (fromIλ λ) where
     g (E S) = "s"
     g (E K) = "k"
     g (E I) = "i"
     g (A l r) = '`' : g l ++ g r
 
 compile :: String -> String
-compile = generate . translate . toIλ . parseExpression
+compile = toUnl . translate . toIλ . parseExpression
 
-toUnl :: Bλ -> String
-toUnl = generate . translate . toIλ
+generate :: Bλ -> String
+generate = toUnl . translate . toIλ
