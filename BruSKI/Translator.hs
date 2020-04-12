@@ -40,8 +40,8 @@ fromIλ S1         = E S
 fromIλ K1         = E K
 fromIλ I1         = E I
 fromIλ (App1 l r) = A (fromIλ l) (fromIλ r)
-fromIλ (Abs1 _)   = error "Compile Error: dangling abstraction"
-fromIλ (Idx1 _)   = error "Compile Error: free index in expression"
+fromIλ (Abs1 _)   = error "Translation Error\ndangling abstraction"
+fromIλ (Idx1 _)   = error "Translation Error\nfree index in expression"
 
 -- Lists the indeces with their "bindedness".
 -- More on this at the VarType definition.
@@ -117,7 +117,7 @@ translate S1 = S1
 translate K1 = K1
 translate I1 = I1
 translate (Unl1 s) = Unl1 s
-translate _  = error "Not implemented!"
+translate _  = error "Translation Error: not implemented"
 
 -- Turns translated expressions to Unlambda code.
 generate :: Iλ -> String
