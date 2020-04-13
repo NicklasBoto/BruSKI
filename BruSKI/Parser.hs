@@ -29,7 +29,7 @@ sequentStatement :: Parser Stmt
 sequentStatement = whiteSpace *> statement
 
 statement :: Parser Stmt
-statement =  expressStmt <|> assignStmt
+statement = importStmt <|> expressStmt <|> assignStmt
 
 expressStmt :: Parser Stmt
 expressStmt = reservedOp "!!" *> (Express <$> expression)
@@ -57,6 +57,12 @@ getArity expr = do
     else
         return arity
 
+importStmt :: Parser Stmt
+importStmt = do
+    string "import"
+    spaces
+    file <- many1 alphaNum
+    return $ Import file
 
 ---- Compiler Specific Expression Parser (CSEP)
 forCompiler :: Parser Bλ

@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 
 module AST
-        ( Stmt (Assign, Express)
+        ( Stmt (Assign, Express, Import)
         , Sequence
         , Bλ (Idx, Abs, App, Unl, Enc, Prc, Fun)
         , Iλ (Idx1, Abs1, App1, S1, K1, I1, Unl1, D1)
@@ -11,7 +11,9 @@ module AST
 import Data.List
 
 -- Stores BruSKI epxressions
-data Stmt = Assign String Bλ Integer | Express Bλ
+data Stmt = Assign String Bλ Integer 
+          | Express Bλ
+          | Import String
 
 type Sequence = [Stmt]
 
@@ -61,6 +63,7 @@ instance Show Bλ where
 instance Show Stmt where
         show (Assign s b a) = "[" ++ s ++ " , " ++ show b ++ ", " ++ show a ++ "]"
         show (Express    b) = "[!!, " ++ show b ++ "]"
+        show (Import     s) = "[-> " ++ show s ++ "]"
 
 instance {-# OVERLAPPING #-} Show Sequence where
     show = intercalate "\n" . map show
