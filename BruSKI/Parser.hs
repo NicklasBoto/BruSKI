@@ -12,6 +12,7 @@ when you find someone alive.
 
 ---- Format Import
 import Data.Char
+-- import Main.Utf8 (withUtf8)
 
 ---- Parsec Import
 import Text.ParserCombinators.Parsec
@@ -59,9 +60,8 @@ getArity expr = do
 
 importStmt :: Parser Stmt
 importStmt = do
-    string "import"
-    spaces
-    file <- many1 alphaNum
+    string "#import"
+    file <- angles (many1 alphaNum)
     return $ Import file
 
 ---- Compiler Specific Expression Parser (CSEP)
@@ -109,8 +109,8 @@ synSugar =  unlP <|> prtP <|> intP <|> chrP
 unlP, intP, chrP :: Parser Bλ
 unlP = try $ string "UNL" *> (Unl <$> braces (many1 (noneOf "}")))
 prtP = try $ string "PRT" *> (toPrint <$> braces (many1 (noneOf "}")))
-intP = try $ string "INT" *> (encode toInt <$> braces (many1 digit))
-chrP = try $ string "CHR" *> (encode ord <$> braces anyChar)
+intP = try $ string "INT" *> (encode EncZ toInt <$> braces (many1 digit))
+chrP = try $ string "CHR" *> (encode EncX ord <$> braces anyChar)
 
 
 ---- User Input, Debug

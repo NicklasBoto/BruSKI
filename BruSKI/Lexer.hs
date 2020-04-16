@@ -4,6 +4,7 @@ module Lexer
         , whiteSpace
         , parens
         , braces
+        , angles
         , natural
         , comma
         ) where
@@ -38,6 +39,7 @@ reservedOp = Token.reservedOp lexer
 whiteSpace = Token.whiteSpace lexer
 parens     = Token.parens     lexer
 braces     = Token.braces     lexer
+angles     = Token.angles     lexer
 natural    = Token.natural    lexer
 comma      = Token.comma      lexer
 
