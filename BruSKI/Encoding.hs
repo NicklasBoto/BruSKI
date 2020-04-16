@@ -5,6 +5,7 @@ module Encoding
         , toInteg
         , toInt
         , toPrint
+        , toChar
         ) where
 
 
@@ -18,13 +19,14 @@ toPrint :: String -> Bλ
 toPrint s = Unl $ pr ++ '.' : intersperse '.' s ++ "i"
         where pr = replicate (length s) '`'
 
-encode :: (a -> Int) -> a -> Bλ
-encode f c = Abs $ iterate (App Enc) (Idx 0) !! (f c)
+encode :: Bλ -> (a -> Int) -> a -> Bλ
+encode e f c = Abs $ iterate (App e) (Idx 0) !! (f c)
 
 decode :: Bλ -> Integer
-decode (Idx 0)     = 0
-decode (App Enc b) = 1 + decode b
-decode (Abs b)     = decode b
+decode (Idx 0)      = 0
+decode (App EncZ b) = 1 + decode b
+decode (App EncX b) = 1 + decode b
+decode (Abs b)      = decode b
 
 countLambda :: Bλ -> Integer
 countLambda (App l r) = countLambda l + countLambda r
@@ -36,3 +38,6 @@ toInteg = read
 
 toInt :: String -> Int
 toInt = read
+
+toChar :: Integer -> Char
+toChar = toEnum . fromInteger
