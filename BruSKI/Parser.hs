@@ -61,6 +61,7 @@ getArity expr = do
 importStmt :: Parser Stmt
 importStmt = do
     string "#import"
+    spaces
     file <- angles (many1 alphaNum)
     return $ Import file
 
