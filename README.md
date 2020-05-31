@@ -158,4 +158,3 @@ This evaluates to "`.yi", in Unlambda.
 Which prints "y".
 *;
 ```
-

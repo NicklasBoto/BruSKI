@@ -1,7 +1,7 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Generator
-        (
+        (runString
         ) where
 
 ---- Language Import

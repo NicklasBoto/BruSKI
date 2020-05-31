@@ -1,0 +1,85 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 984cb1cabd3d3a0487e72dbd10dd31f649cfa6ebef96d134b013677e2d9829b5
+
+name:           BruSKI
+version:        0.1.0.0
+description:    Please see the README on GitHub at https://github.com/NicklasBoto/BruSKI#readme
+homepage:       https://github.com/NicklasBoto/BruSKI#readme
+bug-reports:    https://github.com/NicklasBoto/BruSKI/issues
+author:         Nicklas Botö
+maintainer:     nicklas.boto@gmail.com
+copyright:      BruSKI  Copyright (C) 2020  Nicklas Botö
+license:        GPL
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/NicklasBoto/BruSKI
+
+library
+  exposed-modules:
+      AST
+      Encoding
+      ErrorHandler
+      Generator
+      Lexer
+      Lib
+      Parser
+      Sexy
+      Translator
+      Unlambda.AST
+      Unlambda.Interpreter
+      Unlambda.Parser
+      Unlambda.Run
+      Unlambda.UserInputHandler
+  other-modules:
+      Paths_BruSKI
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , mtl
+    , parsec
+  default-language: Haskell2010
+
+executable BruSKI-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_BruSKI
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      BruSKI
+    , base >=4.7 && <5
+    , containers
+    , mtl
+    , parsec
+    , with-utf8
+  default-language: Haskell2010
+
+test-suite BruSKI-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_BruSKI
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      BruSKI
+    , base >=4.7 && <5
+    , containers
+    , mtl
+    , parsec
+  default-language: Haskell2010
