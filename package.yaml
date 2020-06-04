@@ -24,6 +24,7 @@ dependencies:
 - parsec
 - containers
 - mtl
+- with-utf8
 
 library:
   source-dirs: src

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 984cb1cabd3d3a0487e72dbd10dd31f649cfa6ebef96d134b013677e2d9829b5
+-- hash: 789806cdbea0f8467319ea8725a9a8da9674123487c320e120ecf2b44ee2bb0f
 
 name:           BruSKI
 version:        0.1.0.0
@@ -50,6 +50,7 @@ library
     , containers
     , mtl
     , parsec
+    , with-utf8
   default-language: Haskell2010
 
 executable BruSKI-exe
@@ -82,4 +83,5 @@ test-suite BruSKI-test
     , containers
     , mtl
     , parsec
+    , with-utf8
   default-language: Haskell2010
