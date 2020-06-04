@@ -12,7 +12,7 @@ when you find someone alive.
 
 ---- Format Import
 import Data.Char
--- import Main.Utf8 (withUtf8)
+import Main.Utf8 (withUtf8)
 
 ---- Parsec Import
 import Text.ParserCombinators.Parsec
@@ -27,7 +27,11 @@ whileParser :: Parser Sequence
 whileParser = manyTill sequentStatement eof
 
 sequentStatement :: Parser Stmt
-sequentStatement = whiteSpace *> statement
+sequentStatement = do
+        whiteSpace
+        s <- statement
+        whiteSpace
+        return s
 
 statement :: Parser Stmt
 statement = importStmt <|> expressStmt <|> assignStmt
@@ -121,7 +125,7 @@ parseString str = case parse whileParser "String Parser" str of
                     Right r -> r
 
 parseFile :: String -> IO Sequence
-parseFile file = do
+parseFile file = withUtf8 $ do
         program <- readFile file
         case parse whileParser file program of
           Left  e -> print e >> fail "Parse Error"
