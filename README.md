@@ -16,6 +16,7 @@ And in some part for me to investigate my interest in the interface between lamb
 - [ ] Symbol Table Generation / Management
 - [ ] Code Optimization
 - [ ] Unl Interpreter Integration
+- [ ] Syntax Highlighting
 
 ## Specification
 
@@ -40,28 +41,10 @@ Omitting this will cause the compiler to generate one entry per bound variable (
 Note that this is really only useful when you want to restrict the user, by throwing an error when a combinator is not found in the symbol table.
 
 ```
-x := λ 0         :: 1
-y := λλ 0        :: 2
-z := λλλ 0 (2 3) :: 3
+x := λ 0                     :: 1
+y := λλ 0                    :: 2
+z := λλλ ((1) (0)) ((2) (0)) :: 3
 ```
-
-### Evaluation
-
-The compiler creates a symbol table of variable names and their associated Unlambda expressions, as well as the partially applied combinators.
-
-```
-kComb := λλ 1
-```
-
-This would be evaluated to the symbol table:
-
-| Variable Name | Unλ expression |
-|---------------|----------------|
-| \_\_kComb     | k              |
-| f\_\_kComb    | \`k            |
-| ff\_\_kComb   | \`\`k          |
-
-In this expression, _λλ1_ is bound to the name kComb and is given two applications kCombf and kCombff (due to the 2 assignment)
 
 ### Application
 
@@ -91,10 +74,10 @@ two  := INT{2}
 
 !! plus{one, two}
 
-;*
+{-
 This will evaluate to
 λ ζ (ζ (ζ (0)) --UNL-> `.3i
-*;
+-}
 ```
 
 ### Built-ins
@@ -103,7 +86,7 @@ Some built-in "syntactic sugar" functions are included, for ease of use. These i
 
 #### INT
 
-_INT_ converts natural numbers to their church encoding.
+_INT_ converts natural numbers to their church encoding. Note that concatenations of different encodings will defer to the highest ranked encoder (i.e the outermost encoding).
 
 ```
 INT{2} => λ ζ{ζ{%0}} => λ ζ (ζ 0)
@@ -135,17 +118,17 @@ PRT{BruSKI} => UNL{``````.B.r.u.S.K.Ii}
 
 ### Comments
 
-The character _;_ (semicolon) denotes comments. Inline comments use the symbol  _;* / *;_.
+The characters _--_ (double dash) denotes comments. Multiline comments use the symbol  _{- / -}_.
 
 ```
 ; Ooga booga
-kComb ;* the K-combinator *; := λλ 1 :: 2
+kComb {- the K-combinator -} := λλ 1 :: 2
 ```
 
 ### Example
 
 ```
-; Stupid complicated way of printing
+-- Stupid complicated way of printing
 
 kComb := λλ 1                  :: 2
 print := λ UNL{`.%0i}          :: 1
@@ -153,8 +136,8 @@ foo   := kComb{CHR{y}, CHR{n}} :: 0
 
 !! print{foo}
 
-;*
+{-
 This evaluates to "`.yi", in Unlambda.
 Which prints "y".
-*;
+-}
 ```
