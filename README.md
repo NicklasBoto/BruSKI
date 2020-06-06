@@ -121,7 +121,7 @@ PRT{BruSKI} => UNL{``````.B.r.u.S.K.Ii}
 The characters _--_ (double dash) denotes comments. Multiline comments use the symbol  _{- / -}_.
 
 ```
-; Ooga booga
+-- Ooga booga
 kComb {- the K-combinator -} := λλ 1 :: 2
 ```
 
