@@ -1,0 +1,28 @@
+# TODO (But not really)
+Ok I know, this is not really a TODO, this is mostly filled with ideas and such. But this filename got a really nice icon in vs code.
+
+## Change indentifier characters?
+Consider indentifier names. What should the indentStart and indentLetter (in src/Lexer.hs) be? Names like + and * are cool (maybe haskell style infix operators...), but require parser rework.
+
+## Pre-compile syntax style
+Change parser to use more "haskell style" syntax, for example the imports statements now use ` #import <file_name> `, which is ugly but make parsing easier.
+I want to minimize the amount of reserved keywords, so maybe a pre-compiler section in the program. This pre-compile stage might be in line with the planned typed dialect syntax.
+
+```
+{*
+
+import file1
+import file2
+
+*}
+```
+
+And maybe some other {C / C} style for macro implementation and such. Where C is some character, like '-' for comments and '*' in the example above.
+
+```
+{+ macro_name
+macro_body
++}
+```
+
+I'm not sure whether the macro body should be defined in Haskell (with code injection), or BruSKI.
