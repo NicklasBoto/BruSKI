@@ -43,24 +43,6 @@ data Iλ = Idx1 Int
 -- Check β-equivalence (Remove abstractions, compute application) for Eq
 -- Could just check SKI variant for equality
 
-{- Because windows terminal is mad at unicode
-instance Show Stmt where
-        show (Assign s b a) = "[" ++ s ++ " , " ++ show b ++ ", " ++ show a ++ "]"
-        show (Express  b) = "[!!, " ++ show b ++ "]"
-        show (Sequent s)  = intercalate "\n" $ map show s
-
-
-instance Show Bλ where
-        show (Idx x)           = show x
-        show (Abs (App Enc r)) = "ζ(" ++ show (1 + decode r) ++ ")"
-        show (Abs s)           = "λ " ++ show s
-        show (App l r)         = show l ++ " (" ++ show r ++ ")"
-        show (Unl s)           = "{" ++ s ++ "}"
-        show (Enc)             = "ζ"
-        show (Prc x)           = "%" ++ show x
-        show (Fun s a)         = show s ++ show a
--}
-
 instance Show Stmt where
         show (Assign s b a) = "[" ++ s ++ " , " ++ show b ++ ", " ++ show a ++ "]"
         show (Express    b) = "[!!, " ++ show b ++ "]"
@@ -71,13 +53,13 @@ instance {-# OVERLAPPING #-} Show Sequence where
 
 instance Show Bλ where
         show (Idx x)            = show x
-        show (Abs (App EncZ r)) = "z(" ++  show   (1 + decode r) ++ ")"
-        show (Abs (App EncX r)) = "x(" ++ [toChar (1 + decode r)] ++ ")"
-        show (Abs s)            = "l " ++ show s
+        show (Abs (App EncZ r)) = "ζ(" ++  show   (1 + decode r) ++ ")"
+        show (Abs (App EncX r)) = "ξ(" ++ [toChar (1 + decode r)] ++ ")"
+        show (Abs s)            = "λ " ++ show s
         show (App l r)          = show l ++ " (" ++ show r ++ ")"
         show (Unl s)            = "{" ++ s ++ "}"
-        show (EncZ)             = "z"
-        show (EncX)             = "x"
+        show (EncZ)             = "ζ"
+        show (EncX)             = "ξ"
         show (Prc x)            = "%" ++ show x
         show (Fun s a)          = show s ++ show a
 
