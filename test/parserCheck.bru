@@ -1,0 +1,23 @@
+-- Parser Test 4
+
+{-
+Multiline comments
+many lines yes
+-}
+
+freeVar     := 1
+abstraction := λ 0
+application := (0) (1)
+arityCount  := λλλλλλ 0
+ixEscDlim   := %0               -- comment at end of line
+arityCheck  := λλ 0 :: 1
+synSugar    := INT{123}
+commentexpr {- here! -} := {- there! -} PRT{aaaooga}
+
+-- whitespace and comment line
+unlCheck    := UNL{```.f.o.oi}
+
+!! abstraction{freeVar}
+!! PRT{Hello World!}
+
+-- some trailing whitespace here

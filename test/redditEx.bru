@@ -1,10 +1,10 @@
-; reddit example
+-- reddit example
 
-#import <Combinators>
+#import <src/Prelude/Combinators>
 
 myS  := λλλ ((2) (0)) ((1) (0))               :: 3
 loop := λ (λ (1) ((0) (0))) (λ (1) ((0) (0))) :: 1 
 foo  := K{loop{myS}, I}
-; yes, i will improve application
+-- yes, i will improve application
 
 !! foo
