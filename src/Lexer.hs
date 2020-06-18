@@ -1,5 +1,5 @@
 module Lexer
-        (identifier
+        ( identifier
         , reservedOp
         , whiteSpace
         , parens
@@ -15,9 +15,9 @@ import qualified Text.ParserCombinators.Parsec.Token as Token
 
 ---- Lexer Definition
 languageDef =
-   emptyDef { Token.commentStart    = ";*"
-            , Token.commentEnd      = "*;"
-            , Token.commentLine     = ";"
+   emptyDef { Token.commentStart    = "{-"
+            , Token.commentEnd      = "-}"
+            , Token.commentLine     = "--"
             , Token.identStart      = letter
             , Token.identLetter     = alphaNum
             , Token.reservedNames   = ["UNL" ,"INT", "CHR", "PRT"]
