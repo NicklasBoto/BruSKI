@@ -66,7 +66,7 @@ importStmt :: Parser Stmt
 importStmt = do
     string "#import"
     spaces
-    file <- angles (many1 alphaNum)
+    file <- angles (many1 (noneOf ">"))
     return $ Import file
 
 ---- Compiler Specific Expression Parser (CSEP)
