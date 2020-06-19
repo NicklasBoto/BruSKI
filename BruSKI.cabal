@@ -4,13 +4,13 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 789806cdbea0f8467319ea8725a9a8da9674123487c320e120ecf2b44ee2bb0f
+-- hash: 928fbd5071617ee448363a6f82a221ce47b02d737ebc9a7777c6fdc204124aeb
 
 name:           BruSKI
 version:        0.1.0.0
 description:    Please see the README on GitHub at https://github.com/NicklasBoto/BruSKI#readme
-homepage:       https://github.com/NicklasBoto/BruSKI#readme
-bug-reports:    https://github.com/NicklasBoto/BruSKI/issues
+homepage:       https://github.com/bruski.nicklasbotö.se#readme
+bug-reports:    https://github.com/bruski.nicklasbotö.se/issues
 author:         Nicklas Botö
 maintainer:     nicklas.boto@gmail.com
 copyright:      BruSKI  Copyright (C) 2020  Nicklas Botö
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/NicklasBoto/BruSKI
+  location: https://github.com/bruski.nicklasbotö.se
 
 library
   exposed-modules:
@@ -50,10 +50,11 @@ library
     , containers
     , mtl
     , parsec
+    , turtle
     , with-utf8
   default-language: Haskell2010
 
-executable BruSKI-exe
+executable BruSKI
   main-is: Main.hs
   other-modules:
       Paths_BruSKI
@@ -66,6 +67,7 @@ executable BruSKI-exe
     , containers
     , mtl
     , parsec
+    , turtle
     , with-utf8
   default-language: Haskell2010
 
@@ -83,5 +85,6 @@ test-suite BruSKI-test
     , containers
     , mtl
     , parsec
+    , turtle
     , with-utf8
   default-language: Haskell2010

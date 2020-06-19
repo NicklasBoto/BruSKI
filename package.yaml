@@ -1,6 +1,6 @@
 name:                BruSKI
 version:             0.1.0.0
-github:              "NicklasBoto/BruSKI"
+github:              "bruski.nicklasbotö.se"
 license:             GPL
 author:              "Nicklas Botö"
 maintainer:          "nicklas.boto@gmail.com"
@@ -25,12 +25,13 @@ dependencies:
 - containers
 - mtl
 - with-utf8
+- turtle
 
 library:
   source-dirs: src
 
 executables:
-  BruSKI-exe:
+  BruSKI:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
