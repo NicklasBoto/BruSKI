@@ -1,4 +1,7 @@
 # BruSKI
+
+![banner](./BruSKI-banner.jpg?raw=true "Title")
+
 ### "DeBruijn to SKI" Untyped language that compiles to Unlambda.
 Haskell project that aims to show that small abstractions to lambda calculus yield a surprisingly useful language.
 And in some part for me to investigate my interest in the interface between lambda calculus and combinator calculus.
