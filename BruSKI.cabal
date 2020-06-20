@@ -4,11 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 928fbd5071617ee448363a6f82a221ce47b02d737ebc9a7777c6fdc204124aeb
+-- hash: 11b674c2692009978448f207414a67e6009b77bb63c2a31c3b3408d799295d95
 
 name:           BruSKI
 version:        0.1.0.0
-description:    Please see the README on GitHub at https://github.com/NicklasBoto/BruSKI#readme
+description:    Please see the README on GitHub at learnbruski.nicklasbotö.se
 homepage:       https://github.com/bruski.nicklasbotö.se#readme
 bug-reports:    https://github.com/bruski.nicklasbotö.se/issues
 author:         Nicklas Botö
@@ -54,7 +54,7 @@ library
     , with-utf8
   default-language: Haskell2010
 
-executable BruSKI
+executable bruc
   main-is: Main.hs
   other-modules:
       Paths_BruSKI
