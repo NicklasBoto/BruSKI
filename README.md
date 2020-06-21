@@ -7,7 +7,7 @@ Haskell project that aims to show that small abstractions to lambda calculus yie
 And in some part for me to investigate my interest in the interface between lambda calculus and combinator calculus.
 
 ## Installation
-Note that this is in alpha and all features are not present, so expect some bugs and missing features. Feel free to open an issue if you find a bug that is not listed!
+Note that this is in alpha, so expect some bugs and missing features. Feel free to open an issue if you find a bug that is not listed!
 
 First, make sure you have stack installed. You can find it here:
 
@@ -16,11 +16,18 @@ https://docs.haskellstack.org/en/stable/README/#how-to-install
 Then simply run the install script!
 
 ```
-chmod +x install.sh
-./install.sh
+$ chmod +x install.sh
+$ ./install.sh
 ```
 
 The script asks for permission to copy the program to your path.
+
+## Bruc
+Bruc (like the name Bruce) is the BruSKI compiler, it is copied to your bin during installation and you should be able to run it in the terminal.
+
+```
+$ bruc --help
+```
 
 ## Workflow
 - [x] [Specification](SPEC.md)
