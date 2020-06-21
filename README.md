@@ -6,6 +6,22 @@
 Haskell project that aims to show that small abstractions to lambda calculus yield a surprisingly useful language.
 And in some part for me to investigate my interest in the interface between lambda calculus and combinator calculus.
 
+## Installation
+Note that this is in alpha and all features are not present, so expect some bugs and missing features. Feel free to open an issue if you find a bug that is not listed!
+
+First, make sure you have stack installed. You can find it here:
+
+https://docs.haskellstack.org/en/stable/README/#how-to-install
+
+Then simply run the install script!
+
+```
+chmod +x install.sh
+./install.sh
+```
+
+The script asks for permission to copy the program to your path.
+
 ## Workflow
 - [x] [Specification](SPEC.md)
 - [x] [Abstract Syntax Tree](BruSKI/AST.hs)
