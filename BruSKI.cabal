@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b48a22a5fccf67deadf47fbdb07e9eee1b95cea85501e1464302ceb9867aa3ca
+-- hash: 5bb1d4643021e7940389abef6d27ecd9f8fe5f94acf6ca68919607c11e837b5c
 
 name:           BruSKI
 version:        0.4
@@ -48,6 +48,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
+    , directory
     , mtl
     , parsec
     , turtle
@@ -65,6 +66,7 @@ executable bruc
       BruSKI
     , base >=4.7 && <5
     , containers
+    , directory
     , mtl
     , parsec
     , turtle
@@ -83,6 +85,7 @@ test-suite BruSKI-test
       BruSKI
     , base >=4.7 && <5
     , containers
+    , directory
     , mtl
     , parsec
     , turtle

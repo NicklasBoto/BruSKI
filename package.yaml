@@ -26,6 +26,7 @@ dependencies:
 - mtl
 - with-utf8
 - turtle
+- directory
 
 library:
   source-dirs: src
