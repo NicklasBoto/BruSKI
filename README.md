@@ -13,22 +13,10 @@ First, make sure you have stack installed. You can find it here:
 
 https://docs.haskellstack.org/en/stable/README/#how-to-install
 
-Then install with stack.
+Then install with stack. Note that you have to add `~/.local/bin/` to your path, or copy the executable to your bin.
 
 ```
 $ stack install
-```
-
-Stack will add it to a local bin at:
-
-```
-/home/USER/.local/bin
-```
-
-So add that directory to your path, or copy the executable to:
-
-```
-/usr/bin
 ```
 
 ## Bruc
