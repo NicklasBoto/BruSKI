@@ -13,14 +13,23 @@ First, make sure you have stack installed. You can find it here:
 
 https://docs.haskellstack.org/en/stable/README/#how-to-install
 
-Then simply run the install script!
+Then install with stack.
 
 ```
-$ chmod +x install.sh
-$ ./install.sh
+$ stack install
 ```
 
-The script asks for permission to copy the program to your path.
+Stack will add it to a local bin at:
+
+```
+/home/USER/.local/bin
+```
+
+So add that directory to your path, or copy the executable to:
+
+```
+/usr/bin
+```
 
 ## Bruc
 Bruc (like the name Bruce) is the BruSKI compiler, it is copied to your bin during installation and you should be able to run it in the terminal.
