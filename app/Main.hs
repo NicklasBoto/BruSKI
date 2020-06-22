@@ -9,11 +9,12 @@ import Paths_BruSKI (version)
 import Data.Version (showVersion)
 import Control.Monad
 import System.IO
+import System.Directory
 import qualified Sexy as Sexy
 
 -- main parser
 mainSubroutine :: IO ()
-mainSubroutine = echo "Hello BruSKI!"
+mainSubroutine = Sexy.welcome
 
 parseMain :: Parser (IO ())
 parseMain = pure mainSubroutine
@@ -30,16 +31,27 @@ parseMain = pure mainSubroutine
 
 -- filepath parser
 getOutputPath :: Parser (Turtle.FilePath, Maybe Turtle.FilePath)
-getOutputPath = (,) <$>  (argPath "source" "Input file of compiler")
-                    <*>   optional (optPath "target" 'o' "Output file of compiler")
+getOutputPath = (,) <$> (argPath "source" "Input file of compiler")
+                    <*>  optional (optPath "target" 'o' "Output file of compiler")
 
 compileToFile :: Turtle.FilePath -> Maybe Turtle.FilePath -> IO ()
-compileToFile source Nothing       = error $ "Generator Error\nplease specify output file name\nexample: bruc source -o target"
-compileToFile source (Just target) = do
-        file <- openFile (encodeString target) WriteMode 
-        compiled <- liftM fst . genFile $ encodeString source
+compileToFile source Nothing = writeToFile (encodeString source) (generateFileName ".")
+compileToFile source (Just target)
+  | filename target == emptyPath = writeToFile fSource (generateFileName fTarget)
+  | otherwise                    = writeToFile fSource                   fTarget
+    where fSource   = encodeString source
+          fTarget   = encodeString target
+          emptyPath = decodeString ""
+
+writeToFile :: System.IO.FilePath -> System.IO.FilePath -> IO ()
+writeToFile source target = do
+        file <- openFile target WriteMode 
+        compiled <- liftM fst . genFile $ source
         hPutStrLn file compiled 
         hClose file
+
+-- generateFileName :: System.IO.FilePath -> String
+generateFileName folder = "poop.ski"
 
 compileParser :: Parser (IO ())
 compileParser = fmap (uncurry compileToFile) (subcommand "compile" "compile BruSKI source code to Unlambda file" getOutputPath)
