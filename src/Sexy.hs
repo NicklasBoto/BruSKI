@@ -1,4 +1,6 @@
-module Sexy (welcome) where
+module Sexy ( welcome
+            , welcomeText
+            ) where
 
 ---- Format Import
 import Data.List
@@ -56,6 +58,9 @@ brewBeer = [ "                                                                  
 brewBeerText :: String
 brewBeerText = "\n                                BruSKI\n                           DeBruijn -> SKI\n                       Version 0.4 - March 2020\n                           by Nicklas Botö" 
 
+welcomeText :: String
+welcomeText = (intercalate "\n" $ brewBeer) ++ brewBeerText
+
 welcome :: IO ()
-welcome = putStrLn $ (intercalate "\n" $ brewBeer) ++ brewBeerText
+welcome = putStrLn welcomeText
 
