@@ -1,8 +1,7 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 module Unlambda.Run
-        ( runFile
-        , run    -- run/runFile call parseLazy
+        ( run    -- run/runFile call parseLazy
         , formatParse
         , formatParseFile
         ) where
