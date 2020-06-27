@@ -56,7 +56,7 @@ brewBeer = [ "                                                                  
            , "               ```........................................```                             "]
 
 brewBeerText :: String
-brewBeerText = "\n                                BruSKI\n                           DeBruijn -> SKI\n                       Version 0.4 - March 2020\n                           by Nicklas Botö" 
+brewBeerText = "\n                                BruSKI\n                           DeBruijn -> SKI\n                       Version 0.4 - June 2020\n                           by Nicklas Botö" 
 
 welcomeText :: String
 welcomeText = (intercalate "\n" $ brewBeer) ++ brewBeerText
