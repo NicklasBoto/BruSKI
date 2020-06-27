@@ -11,7 +11,7 @@ module Generator
 import AST
 import Unlambda.AST
 import Encoding
-import qualified Unlambda.Run as Unlambda
+import qualified Unlambda.Run as Unlambda hiding (runFile)
 
 ---- Parser Import
 import Parser
@@ -23,7 +23,6 @@ import Translator
 ---- Table Management Import
 import Control.Monad.State
 import Control.Monad
-
 
 {- ABSTRACTION AND FUNCTION APPLICATION
 
@@ -39,6 +38,9 @@ input = λ UNL{`k%0}
 l = UNL{`k} => `k
 r = λ0 => i
 l ++ r = `ki
+
+a := λ F{%0}
+--> λ (F{}) (0)
 
 -}
 
@@ -57,6 +59,12 @@ prependTable s = state $ \ss -> ((), (s:ss))
 partialApply :: Integer -> Unlambda -> [Unlambda]
 partialApply arity unl = take (fromInteger arity + 1) (iterate ('`':) unl)
 
+-- takes care of SKID-marks
+escapeFunctionIndex :: [Bλ] -> [Bλ]
+escapeFunctionIndex           [] = []
+escapeFunctionIndex ((Prc n):as) = (Idx n):(escapeFunctionIndex as)
+escapeFunctionIndex      (a :as) =      a :(escapeFunctionIndex as)
+
 expandExpression :: Bλ -> SymbolTable -> Bλ
 expandExpression λ table = eE λ where
     eE (Idx           n)  = Idx n
@@ -68,7 +76,9 @@ expandExpression λ table = eE λ where
     eE (Fun   name args)  = let  (function, arity) = getFunction name table in 
                             if   length args > arity
                             then error $ "Generator Error\ntoo many arguments, arity is " ++ show arity
-                            else eE $ foldl App function args
+                            else eE $ foldl App function (escapeFunctionIndex args)
+    eE (Prc           x)  = error $ "Generator Error\nnot implented: " ++ "index escape delimiters"
+    eE                _   = error $ "Generator Error\nhow the hell did you get here?"
 
 generateTable :: Sequence -> StateT SymbolTable IO Unlambda
 generateTable [] = error "Generator Error\nnon-library files must terminate with an evaluation (!!)"
@@ -95,7 +105,7 @@ runString s = do
 genFile :: String -> IO (Unlambda, SymbolTable)
 genFile f = do
     file <- parseFile f
-    runStateT (generateTable file) []
+    runStateT (generateTable file) [] 
 
 runFile :: String -> IO Eλ
 runFile f = do
