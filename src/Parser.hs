@@ -124,7 +124,7 @@ parseString str = case parse whileParser "String Parser" str of
                     Left  e -> error $ show e
                     Right r -> r
 
-parseFile :: String -> IO Sequence
+parseFile :: FilePath -> IO Sequence
 parseFile file = withUtf8 $ do
         program <- readFile file
         case parse whileParser file program of
