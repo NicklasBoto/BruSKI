@@ -20,7 +20,7 @@ mainSubroutine = Sexy.welcome
 parseMain :: Parser (IO ())
 parseMain = pure mainSubroutine
 
--- filepath parser
+-- compile parser
 getOutputPath :: Parser (Turtle.FilePath, Maybe Turtle.FilePath)
 getOutputPath = (,) <$> (argPath "source" "Input file of compiler")
                     <*>  optional (optPath "target" 'o' "Output file of compiler")
@@ -42,10 +42,32 @@ writeToFile source target = do
         hClose file
 
 -- generateFileName :: System.IO.FilePath -> String
-generateFileName folder = "poop.ski"
+generateFileName folder = "out.unl"
 
 compileParser :: Parser (IO ())
 compileParser = fmap (uncurry compileToFile) (subcommand "compile" "Compile BruSKI source code to Unlambda file" getOutputPath)
+
+-- run parser
+getInputPath :: Parser Turtle.FilePath
+getInputPath = argPath "source" "Input file of compiler"
+
+runFromFile :: Turtle.FilePath -> IO ()
+runFromFile source = print =<< Generator.runFile (encodeString source)
+
+runParser :: Parser (IO ())
+runParser = fmap runFromFile (subcommand "run" "Run BruSKI source code without saving it to a file" getInputPath)
+
+-- gen parser
+genFromFile :: Turtle.FilePath -> IO ()
+genFromFile source = do
+        (unl, table) <- Generator.genFile (encodeString source)
+        putStrLn "*** Symbol Table at Compile Time"
+        print table
+        putStrLn "\n*** Compiler Output"
+        print unl
+
+genParser :: Parser (IO ())
+genParser = fmap genFromFile (subcommand "gen" "Generate symbol table and compiler output to terminal" getInputPath)
 
 -- version parser
 version' :: IO()
@@ -87,10 +109,12 @@ parseLee = (subcommand "lee" "Facts about Bruce Lee" (pure lee))
 
 parser :: Parser (IO ())
 parser =  parseMain 
-      <|> parseVersion
-      <|> parseLee
       <|> compileParser
+      <|> runParser
+      <|> genParser
+      <|> parseVersion
       <|> parseWayne
+      <|> parseLee
 
 desc :: Description
 desc = "\n                                bruc\n                         BruSKI -> Unlambda\n                       Version 0.4 - June 2020\n                           by Nicklas Botö"
@@ -99,3 +123,4 @@ main :: IO ()
 main = do
         cmd <- options desc parser
         cmd
+
