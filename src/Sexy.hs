@@ -5,8 +5,8 @@ module Sexy ( welcome
 ---- Format Import
 import Data.List
 
-brewBeer :: [String]
-brewBeer = [ "                                                                                          "
+bigBeer :: [String]
+bigBeer = [ "                                                                                          "
            , "                                                                                          "
            , "                                                                                          "
            , "                                  ``````                                                  "
@@ -55,11 +55,28 @@ brewBeer = [ "                                                                  
            , "              `......----------------------------------......`                            "
            , "               ```........................................```                             "]
 
+smallBeer :: [String]
+smallBeer = [ "      ~  ~          "
+            , "    ( o )o)         "
+            , "   ( o )o )o)       "
+            , " (o( ~~~~~~~o        BruSKI"
+            , " ( )'~~~~~~~'--.     DeBruijn -> SKI"
+            , " ( )|)       |-- \\   Version 0.4 - June 2020"
+            , "   o| /\\\\    |  \\ \\ "
+            , "    |  /\\\\   |   | | by Nicklas Botö"
+            , "   o| /  \\\\/ |  / / "
+            , "    |        |-/ /  "
+            , "    .========.      "
+            ]
+
 brewBeerText :: String
 brewBeerText = "\n                                BruSKI\n                           DeBruijn -> SKI\n                       Version 0.4 - June 2020\n                           by Nicklas Botö" 
 
 welcomeText :: String
-welcomeText = (intercalate "\n" $ brewBeer) ++ brewBeerText
+welcomeText = (intercalate "\n" smallBeer)
+
+welcomeTextBig :: String
+welcomeTextBig = (intercalate "\n" bigBeer) ++ brewBeerText
 
 welcome :: IO ()
 welcome = putStrLn welcomeText
