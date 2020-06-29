@@ -83,7 +83,7 @@ expandExpression λ table = eE λ where
 generateTable :: Sequence -> StateT SymbolTable IO Unlambda
 generateTable [] = error "Generator Error\nnon-library files must terminate with an evaluation (!!)"
 generateTable ((Import file):ss) = do
-    lib <- lift $ parseFile (file ++ ".bru")
+    lib <- lift $ parseFile file
     generateTable (lib ++ ss)
 
 generateTable [Express λ] = generate . expandExpression λ <$> get
@@ -102,12 +102,12 @@ runString s = do
     prog <- liftM fst . genString $ s
     Unlambda.run prog
 
-genFile :: String -> IO (Unlambda, SymbolTable)
+genFile :: FilePath -> IO (Unlambda, SymbolTable)
 genFile f = do
     file <- parseFile f
     runStateT (generateTable file) [] 
 
-runFile :: String -> IO Eλ
+runFile :: FilePath -> IO Eλ
 runFile f = do
     prog <- liftM fst . genFile $ f
     Unlambda.run prog
