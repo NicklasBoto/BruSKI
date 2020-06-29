@@ -24,7 +24,10 @@ import AST
 
 ---- Statement Parser
 whileParser :: Parser Sequence
-whileParser = manyTill sequentStatement eof
+whileParser = do
+        ld <- whileLangDef <|> return []
+        s <- manyTill sequentStatement eof
+        return $ ld ++ s
 
 sequentStatement :: Parser Stmt
 sequentStatement = do
@@ -34,7 +37,8 @@ sequentStatement = do
         return s
 
 statement :: Parser Stmt
-statement = importStmt <|> expressStmt <|> assignStmt
+statement =  expressStmt
+         <|> assignStmt
 
 expressStmt :: Parser Stmt
 expressStmt = reservedOp "!!" *> (Express <$> expression)
@@ -62,12 +66,36 @@ getArity expr = do
     else
         return arity
 
-importStmt :: Parser Stmt
-importStmt = do
-    string "#import"
-    spaces
-    file <- angles (many1 (noneOf ">"))
-    return $ Import file
+---- Language Definiton Statement Parser
+whileLangDef :: Parser Sequence
+whileLangDef = string "{!" *> manyTill langdefStmt (string "!}")
+
+langdefStmt :: Parser Stmt
+langdefStmt = do
+        whiteSpace
+        ld <- precompLangDef
+        whiteSpace
+        return ld
+
+precompLangDef :: Parser Stmt
+precompLangDef =  importPreComp
+              <|> definePreComp
+
+importPreComp :: Parser Stmt
+importPreComp = do
+        string "import"
+        spaces
+        file <- angles (many1  (noneOf ">"))
+        return $ Import file
+
+definePreComp :: Parser Stmt
+definePreComp = do
+        string "define"
+        spaces
+        name <- many1 alphaNum
+        spaces
+        value <- natural
+        return $ Assign name (encode EncZ fromIntegral value) 0
 
 ---- Compiler Specific Expression Parser (CSEP)
 forCompiler :: Parser Bλ
@@ -77,7 +105,10 @@ forCompiler =  funcExpression
 funcExpression :: Parser Bλ
 funcExpression = do
         name <- many1 alphaNum
-        args <- braces (sepBy expression comma) <|> return []
+        spaces
+        args <- braces (sepBy 
+               (do {whiteSpace; e <- expression; whiteSpace; return e})
+                comma) <|> return []
         return $ Fun name args
 
 skidExpression :: Parser Bλ
@@ -85,7 +116,6 @@ skidExpression = do
         reservedOp "%"
         index <- toInteg <$> many1 digit
         return $ Prc index
-
 
 ---- Expression Parser
 expression :: Parser Bλ
