@@ -15,8 +15,6 @@ data Stmt = Assign String Bλ Integer
           | Express Bλ
           | Import String
 
-type Sequence = [Stmt]
-
 -- Stores DebBruijn expressions
 data Bλ = Idx Integer
         | Abs Bλ
@@ -43,13 +41,21 @@ data Iλ = Idx1 Int
 -- Check β-equivalence (Remove abstractions, compute application) for Eq
 -- Could just check SKI variant for equality
 
+type Sequence = [Stmt]
+type Unlambda = String
+type Symbol = (String, (Bλ, Int))
+type SymbolTable = [Symbol]
+
 instance Show Stmt where
         show (Assign s b a) = "[" ++ s ++ " , " ++ show b ++ ", " ++ show a ++ "]"
         show (Express    b) = "[!!, " ++ show b ++ "]"
         show (Import     s) = "[-> " ++ show s ++ "]"
 
 instance {-# OVERLAPPING #-} Show Sequence where
-    show = intercalate "\n" . map show
+        show = intercalate "\n" . map show
+
+instance {-# OVERLAPPING #-} Show SymbolTable where
+        show = intercalate "\n" . map show
 
 instance Show Bλ where
         show (Idx x)            = show x
