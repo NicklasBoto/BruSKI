@@ -22,19 +22,24 @@ import Encoding
 import Lexer
 import AST
 
+---- Helpers
+
+-- there probably is a function that does this... right?
+wrapSpace func = do
+        whiteSpace
+        f <- func
+        whiteSpace
+        return f
+
 ---- Statement Parser
 whileParser :: Parser Sequence
 whileParser = do
-        ld <- whileLangDef <|> return []
+        ld <- whileIDSL <|> return []
         s <- manyTill sequentStatement eof
         return $ ld ++ s
 
 sequentStatement :: Parser Stmt
-sequentStatement = do
-        whiteSpace
-        s <- statement
-        whiteSpace
-        return s
+sequentStatement = wrapSpace statement
 
 statement :: Parser Stmt
 statement =  expressStmt
@@ -66,36 +71,54 @@ getArity expr = do
     else
         return arity
 
+---- Isolated DSL parser (IDSL)
+whileIDSL :: Parser Sequence
+whileIDSL =  whileLangDef
+         <|> whileInfo
+
 ---- Language Definiton Statement Parser
 whileLangDef :: Parser Sequence
 whileLangDef = string "{!" *> manyTill langdefStmt (string "!}")
 
 langdefStmt :: Parser Stmt
-langdefStmt = do
-        whiteSpace
-        ld <- precompLangDef
-        whiteSpace
-        return ld
+langdefStmt = wrapSpace sequentLangDef
 
-precompLangDef :: Parser Stmt
-precompLangDef =  importPreComp
-              <|> definePreComp
+sequentLangDef :: Parser Stmt
+sequentLangDef =  importLangDef
+              <|> defineLangDef
 
-importPreComp :: Parser Stmt
-importPreComp = do
+importLangDef :: Parser Stmt
+importLangDef = do
         string "import"
         spaces
-        file <- angles (many1  (noneOf ">"))
+        file <- manyTill anyChar newline
         return $ Import file
 
-definePreComp :: Parser Stmt
-definePreComp = do
+defineLangDef :: Parser Stmt
+defineLangDef = do
         string "define"
         spaces
         name <- many1 alphaNum
         spaces
         value <- natural
         return $ Assign name (encode EncZ fromIntegral value) 0
+
+---- Info Parser
+whileInfo :: Parser Sequence
+whileInfo = string "{?" *> manyTill infoStmt (string "?}")
+
+infoStmt :: Parser Stmt
+infoStmt = wrapSpace sequentInfo
+
+sequentInfo :: Parser Stmt
+sequentInfo =  authorInfo
+
+authorInfo :: Parser Stmt
+authorInfo = do
+        string "author"
+        spaces
+        author <- many1 alphaNum
+        return $ Assign author (encode EncZ fromIntegral 1) 0
 
 ---- Compiler Specific Expression Parser (CSEP)
 forCompiler :: Parser Bλ
@@ -106,9 +129,7 @@ funcExpression :: Parser Bλ
 funcExpression = do
         name <- many1 alphaNum
         spaces
-        args <- braces (sepBy 
-               (do {whiteSpace; e <- expression; whiteSpace; return e})
-                comma) <|> return []
+        args <- braces (sepBy (wrapSpace expression) comma) <|> return []
         return $ Fun name args
 
 skidExpression :: Parser Bλ
@@ -121,7 +142,7 @@ skidExpression = do
 expression :: Parser Bλ
 expression =  idxExpression
           <|> absExpression
-          <|> appExpression
+          <|> parens appExpression
           <|> synSugar
           <|> forCompiler
 
@@ -133,10 +154,8 @@ absExpression = reservedOp "λ" *> (Abs <$> expression)
 
 appExpression :: Parser Bλ
 appExpression = do
-        l <- idxExpression <|> parens expression
-        spaces
-        r <- idxExpression <|> parens expression
-        return $ App l r
+        as <- sepBy1 expression spaces
+        return $ foldl1 App as
 
 synSugar :: Parser Bλ
 synSugar =  unlP <|> prtP <|> intP <|> chrP
