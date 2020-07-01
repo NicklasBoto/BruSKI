@@ -1,10 +1,14 @@
--- reddit example
+{!
+-- get me some combinators
+import src/Prelude/combinators.bru
+!}
 
-#import <src/Prelude/Combinators>
+myS  := λλλ (2 0 (1 0))
+loop := λ (λ1 (0 0) λ1 (0 0)) :: 1
+foo  := K{ loop{loop}
+         , myS{I}
+         }
 
-myS  := λλλ ((2) (0)) ((1) (0))               :: 3
-loop := λ (λ (1) ((0) (0))) (λ (1) ((0) (0))) :: 1 
-foo  := K{loop{myS}, I}
--- yes, i will improve application
+-- yes, I improved application
 
 !! foo
