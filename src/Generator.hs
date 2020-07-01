@@ -11,6 +11,7 @@ module Generator
 import AST
 import Unlambda.AST
 import Encoding
+import Config
 import qualified Unlambda.Run as Unlambda hiding (runFile)
 
 ---- Parser Import
@@ -83,7 +84,7 @@ expandExpression λ table = eE λ where
 generateTable :: Sequence -> StateT SymbolTable IO Unlambda
 generateTable [] = error "Generator Error\nnon-library files must terminate with an evaluation (!!)"
 generateTable ((Import file):ss) = do
-    lib <- lift $ parseFile file
+    lib <- lift $ parseFile (Config.preludePath ++ file ++ ".bru")
     generateTable (lib ++ ss)
 
 generateTable [Express λ] = generate . expandExpression λ <$> get
