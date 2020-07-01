@@ -13,13 +13,18 @@ import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Language
 import qualified Text.ParserCombinators.Parsec.Token as Token
 
+---- Character Definitions
+greek    = oneOf "αβδεφγηιθκμνοπχρστυξψζΑΒΔΕΦΓΗΙΘΚΛΜΝΟΠΧΡΣΤΥΞΨΖ"
+math     = oneOf "∧∨⇔↔⇒→⊕⊻⩒¬←∀⋀∃⋁⩒∄⊢⊨⊤⊥∴∵∇∆∫∮≤≥≠±∓ℵℶ𝔠ℕℤℚℝℂ⊂⊆∈∉∅"
+allChars = alphaNum <|> greek <|> math
+
 ---- Lexer Definition
 languageDef =
    emptyDef { Token.commentStart    = "{-"
             , Token.commentEnd      = "-}"
             , Token.commentLine     = "--"
-            , Token.identStart      = letter
-            , Token.identLetter     = alphaNum
+            , Token.identStart      = allChars
+            , Token.identLetter     = allChars
             , Token.reservedNames   = ["UNL" ,"INT", "CHR", "PRT"]
             , Token.reservedOpNames = [":=", "!!", "::", "λ", "%"]
             , Token.caseSensitive   = True
