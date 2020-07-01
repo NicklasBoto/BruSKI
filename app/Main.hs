@@ -61,9 +61,9 @@ runParser = fmap runFromFile (subcommand "run" "Run BruSKI source code without s
 genFromFile :: Turtle.FilePath -> IO ()
 genFromFile source = do
         (unl, table) <- Generator.genFile (encodeString source)
-        putStrLn "*** Symbol Table at Compile Time"
+        putStrLn "--- symbol table at compile time"
         print table
-        putStrLn "\n*** Compiler Output"
+        putStrLn "\n--- compiler output"
         print unl
 
 genParser :: Parser (IO ())
