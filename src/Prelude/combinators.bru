@@ -1,12 +1,12 @@
--- Combinatory calculus library
+--!-- combinatory calculus library
 
 -- basic combinators
-S := λλλ ((2 0) (1 0)) :: 3
-K := λλ 1              :: 2
-I := λ 0               :: 1
+S := λλλ (2 0 (1 0))
+K := λλ1 
+I := λ0
 
 -- other fixed points
--- Y := λ ( λ (1) ((0)(0)) ) ( λ (1) ((0)(0)) ) :: 1
+Y := λ (λ1 (0 0) λ1 (0 0)) :: 1
 
 -- non eta-reduced function application variants
-etaI  := λ S{K, K, %0} :: 1
+etaI  := λ S{K, K, 0}

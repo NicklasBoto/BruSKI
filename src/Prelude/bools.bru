@@ -5,16 +5,16 @@ True  := λλ1
 False := λλ0
 
 -- basic boolean operators
-and := λλ ((1 0) False)
-or  := λλ ((1 True) 0)
-not := λ ((0 False) True)
+and := λλ (1 0 False)
+or  := λλ (1 True 0)
+not := λ (0 False True)
 
 -- These functions are kinda cheeky...
 
 nand := λλ not{
-            and{%1, %0}
+            and{1, 0}
            }
 
 nor  := λλ not{
-            or{%1, %0}
+            or{1, 0}
            }
