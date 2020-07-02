@@ -91,7 +91,7 @@ importLangDef :: Parser Stmt
 importLangDef = do
         string "import"
         spaces
-        file <- manyTill anyChar newline
+        file <- many1 alphaNum
         return $ Import file
 
 defineLangDef :: Parser Stmt
@@ -153,9 +153,7 @@ absExpression :: Parser Bλ
 absExpression = reservedOp "λ" *> (Abs <$> expression)
 
 appExpression :: Parser Bλ
-appExpression = do
-        as <- sepBy1 expression spaces
-        return $ foldl1 App as
+appExpression = foldl1 App <$> sepBy1 expression spaces
 
 synSugar :: Parser Bλ
 synSugar =  unlP <|> prtP <|> intP <|> chrP
