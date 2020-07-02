@@ -11,11 +11,19 @@ cout    := λλ or { (and 0 1)
 
 out := λ (0 PRT{True} PRT{False}) -- needs β-reducer
 
+{-
+Note that binary values here are encoded
+like bools.
+
+T --> λλ1 --> ``kXY   --> <k>
+F --> λλ0 --> ```kiXY --> <k><i>
+-}
+
 !! add{T, T} --> it works!
 
 {-
 This program has a few examples of
-appropriate function an application
+appropriate function and application
 syntax usage.
 
 functional  syntax =>  F {X, Y}
