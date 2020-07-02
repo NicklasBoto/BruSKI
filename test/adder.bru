@@ -1,0 +1,27 @@
+{! import bools !}
+
+--!-- adder example
+
+cin     := F
+halfAdd := λλ (xor 0 1)
+add     := λλ (xor cin halfAdd{0, 1}) 
+cout    := λλ or { (and 0 1)
+                 , (and cin halfAdd{0, 1})
+                 }
+
+out := λ (0 PRT{True} PRT{False}) -- needs β-reducer
+
+!! add{T, T} --> it works!
+
+{-
+This program has a few examples of
+appropriate function an application
+syntax usage.
+
+functional  syntax =>  F {X, Y}
+application syntax => (F  X  Y)
+
+These are semantically equivalent
+but the functional syntax is more
+powerful.
+-}
