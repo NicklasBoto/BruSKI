@@ -58,7 +58,7 @@ instance Show Eλ where
         show S         = "<s>"
         show (Sf a)    = show (Sff a I)
         show (Sff a b) = "<s>" ++ show a ++ show b
-        show I         = ""
+        show I         = "<i>"
         show (D a)     = "." ++ a
         show R         = "\n"
         show V         = "<v>"
