@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 30d11a60addaed721fc54b8742af94f8cef1425614337b555c67f374f215f356
+-- hash: d66d19cf358620a2ec3204d49776b5cf78da6d32282313541167e05a28c4f8c6
 
 name:           BruSKI
 version:        0.4
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       AST
+      Config
       Encoding
       ErrorHandler
       Generator
