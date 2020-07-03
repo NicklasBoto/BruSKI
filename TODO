@@ -26,3 +26,19 @@ macro_body
 ```
 
 I'm not sure whether the macro body should be defined in Haskell (with code injection), or BruSKI.
+
+## Alpha naming abstractions
+Hey, I like DeBruijn as much as the next guy, but... naming variables __can__ be a good idea.
+At least as comments after the lambdas. Kinda like how you can comment:
+
+commented := λ {-x-} 0
+
+But with some syntacic sugaring.
+
+Ideas:
+
+λ'x
+λx!
+λ:x
+λ@x
+λx.
