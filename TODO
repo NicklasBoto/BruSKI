@@ -42,3 +42,20 @@ Ideas:
 λ:x
 λ@x
 λx.
+
+## format language definition
+Would be nice to have som syntactic sugar for formatting functions, since I always seem to need one...
+Instead of defining a function and then appying it add the evaluation, we can define keyword in the 
+language definition IDSL, like:
+
+-- Instead of
+out := λ (0 UNL{.*} λ0)
+
+!! out{ λλ0 }
+
+-- Something like this
+{! format λ (0 UNL{.*} λ0) !}
+
+!! λλ0
+
+That is, a function that is always called first at the evaluator.
