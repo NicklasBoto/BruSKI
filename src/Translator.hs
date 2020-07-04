@@ -16,6 +16,7 @@ I drink beer.
 ---- Language Import
 import AST
 import Unlambda.AST
+import Unlambda.Parser -- FIXME #1
 
 ---- Parser Import
 import Parser -- unused
@@ -42,6 +43,7 @@ fromIλ I1         = E I
 fromIλ (App1 l r) = A (fromIλ l) (fromIλ r)
 fromIλ (Abs1 _)   = error "Translation Error\ndangling abstraction"
 fromIλ (Idx1 _)   = error "Translation Error\nfree index in expression"
+fromIλ (Unl1 s)   = parseLazy s
 
 -- Lists the indeces with their "bindedness".
 -- More on this at the VarType definition.
@@ -55,7 +57,7 @@ inScope x = iS 0 x where
 -- Checks if the binder at head position has any indeces bound to it, or not.
 headFree, headBound :: Iλ -> Bool
 headFree  = not . headBound
-headBound = any (==Head) . inScope
+headBound = elem Head . inScope
 
 -- Decrements all the free indeces in DeBruijn-expressions.
 -- This function is really only necessary when translating from DeBruijn.
@@ -127,6 +129,8 @@ toUnl λ  = g (fromIλ λ) where
     g (E K) = "k"
     g (E I) = "i"
     g (A l r) = '`' : g l ++ g r
+    g (E (D s)) = '.' : s
+    g (E V)     = "v"
 
 compile :: String -> String
 compile = toUnl . translate . toIλ . parseExpression
