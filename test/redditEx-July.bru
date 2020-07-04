@@ -1,12 +1,13 @@
---!-- church numerals
+{! import church !}
 
--- the successor function, ++
+{- Functions in the church library!
 succ := λλλ (1 (2 1 0)) :: 1
-
--- basic arithmetic functions
 add  := λλ  (0 succ 1)
 mul  := λλλ (2 (1 0)) :: 2
 exp  := λλ  (0 1)
+-}
+
+--!-- church numerals
 
 -- some numbers
 zero  := λλ0
@@ -15,12 +16,11 @@ two   := succ{one  }
 three := succ{two  }
 four  := succ{three}
 five  := succ{four }
-six   := succ{five }
-seven := succ{six  }
-eight := succ{seven}
-nine  := succ{eight}
-ten   := succ{nine }
 
 -- formatting function
 -- prints the church encoded numeral as stars
 formatChurch := λ (0 UNL{.*} λ0)
+
+!! formatChurch {
+		mul{ three , five } --> ***************<i>, that is 15
+   } 
