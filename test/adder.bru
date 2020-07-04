@@ -9,7 +9,8 @@ cout    := λλ or { (and 0 1)
                  , (and cin halfAdd{0, 1})
                  }
 
-out := λ (0 PRT{True} PRT{False}) -- needs β-reducer
+chs := λ (0 UNL{.T} UNL{.F})
+out := λ (chs{0} (λ0)) :: 1
 
 {-
 Note that binary values here are encoded
@@ -17,11 +18,16 @@ like bools.
 
 T --> λλ1 --> ``kXY   --> <k>
 F --> λλ0 --> ```kiXY --> <k><i>
+
+Using the 'out' function, we can generate
+Unlambda code that prints 'T' or 'F'!
 -}
 
-!! add{T, T} --> it works!
+!! out{
+		add{ F , T }
+      } 
 
-{-
+{- 
 This program has a few examples of
 appropriate function and application
 syntax usage.
