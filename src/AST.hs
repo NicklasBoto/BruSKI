@@ -4,7 +4,7 @@ module AST
         ( Stmt (Assign, Express, Import)
         , Sequence
         , Bλ (Idx, Abs, App, Unl, EncZ, EncX, Prc, Fun)
-        , Iλ (Idx1, Abs1, App1, S1, K1, I1, Unl1, D1)
+        , Iλ (Idx1, Abs1, App1, S1, K1, I1, Unl1)
         ) where
 
 ---- Format Import
@@ -34,22 +34,21 @@ data Iλ = Idx1 Int
         | K1
         | I1
         | Unl1 String
-        | D1 String
         deriving (Show, Eq)
 
 -- App Enc (Abs (Idx 0)) == Abs (App Enc (Idx 0))
 -- Check β-equivalence (Remove abstractions, compute application) for Eq
 -- Could just check SKI variant for equality
 
-type Sequence = [Stmt]
-type Unlambda = String
-type Symbol = (String, (Bλ, Int))
+type Sequence    = [Stmt]
+type Unlambda    = String
+type Symbol      = (String, (Bλ, Int))
 type SymbolTable = [Symbol]
 
 instance Show Stmt where
         show (Assign s b a) = "[" ++ s ++ " , " ++ show b ++ ", " ++ show a ++ "]"
         show (Express    b) = "[!!, " ++ show b ++ "]"
-        show (Import     s) = "[-> " ++ show s ++ "]"
+        show (Import     s) = "[-> "  ++ show s ++ "]"
 
 instance {-# OVERLAPPING #-} Show Sequence where
         show = intercalate "\n" . map show
@@ -59,7 +58,7 @@ instance {-# OVERLAPPING #-} Show SymbolTable where
 
 instance Show Bλ where
         show (Idx x)            = show x
-        show (Abs (App EncZ r)) = "ζ(" ++  show   (1 + decode r) ++ ")"
+        show (Abs (App EncZ r)) = "ζ(" ++  show   (1 + decode r)  ++ ")"
         show (Abs (App EncX r)) = "ξ(" ++ [toChar (1 + decode r)] ++ ")"
         show (Abs s)            = "λ " ++ show s
         show (App l r)          = show l ++ " (" ++ show r ++ ")"
