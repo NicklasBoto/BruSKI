@@ -21,6 +21,32 @@ eight := succ{seven}
 nine  := succ{eight}
 ten   := succ{nine }
 
+exp2  := λ exp{two, 0}  
+n16   := exp2{four }
+n32   := exp2{five }
+n64   := exp2{six  }
+n128  := exp2{seven}
+n256  := exp2{eight}
+n512  := exp2{nine }
+n1024 := exp2{ten  }
+
+
+-- synonyms
++   := add
+*   := mul
+^   := exp
+n0  := zero
+n1  := one
+n2  := two
+n3  := three
+n4  := four
+n5  := five
+n6  := six
+n7  := seven
+n8  := eight
+n9  := nine
+n10 := ten
+
 -- formatting function
 -- prints the church encoded numeral as stars
-formatChurch := λ (0 UNL{.*} λ0)
+formatChurch := λ (0 UNL{.*} λ0) :: 1
