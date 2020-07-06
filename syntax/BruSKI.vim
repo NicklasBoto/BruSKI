@@ -11,11 +11,11 @@ syn keyword bruKeywords INT CHR UNL PRT
 hi def link bruKeywords Function
 
 syn keyword bruImport contained import
-syn keyword bruDefine contained define
-syn region bruLangdef start="{!" end="!}" fold transparent contains=bruImport,bruDefine
+syn keyword bruFormat contained format
+syn region bruLangdef start="{!" end="!}" fold transparent contains=bruImport,bruFormat
 
 hi def link bruImport Include
-hi def link bruDefine Define
+hi def link bruFormat Define
 hi def link bruLangdef Special
 
 syn match bruAbs /λ\+/
@@ -36,10 +36,12 @@ hi def link bruInt Number
 
 syn keyword bruCommentTodo contained TODO FIXME
 syn cluster bruCommentGrp  contains=bruCommentTodo
-syn region bruComment start="--" skip="\\$" end="$" keepend contains=@bruCommentGrp
-syn region bruComment start="{-" end="-}" contains=@bruCommentGrp
-syn region bruAnnounce start="--!--" skip="\\$" end="$" keepend contains=@bruCommentGrp
+syn region  bruComment  start="--" skip="\\$" end="$" keepend contains=@bruCommentGrp
+syn region  bruComment  start="{-" end="-}" contains=@bruCommentGrp
+syn region  bruAnnounce start="--!--" skip="\\$" end="$" keepend contains=@bruCommentGrp
+syn match   bruAbsComment /\w\+\./
 
 hi def link bruCommentTodo Todo
 hi def link bruComment     Comment
+hi def link bruAbsComment  Special
 hi def link bruAnnounce    Todo
