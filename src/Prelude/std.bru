@@ -1,0 +1,32 @@
+{!
+import list
+import comb
+import bool
+import church
+!}
+
+--!-- STANDARD LIB
+----- contains all of prelude
+----- aswell as some useful functions
+
+
+--!-- general functions
+-- checks whether a numeral is 0
+isZero := λ (0 (λ F) T) :: 1
+
+
+--!-- formatters
+lst := cons{ UNL{.0}
+     , cons{ UNL{.1}
+     , cons{ UNL{.2}
+     , cons{ UNL{.3}
+     , cons{ UNL{.4}
+     , cons{ UNL{.5}
+     , cons{ UNL{.6}
+     , cons{ UNL{.7}
+     , cons{ UNL{.8}
+     , cons{ UNL{.9}
+     , nil}}}}}}}}}}
+
+-- prints numbers instead of stars
+formatChurchLst := λ (head{((0 tail) lst)} λ0)
