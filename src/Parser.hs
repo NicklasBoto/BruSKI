@@ -85,7 +85,7 @@ langdefStmt = wrapSpace sequentLangDef
 
 sequentLangDef :: Parser Stmt
 sequentLangDef =  importLangDef
-              <|> defineLangDef
+              <|> formatLangDef
 
 importLangDef :: Parser Stmt
 importLangDef = do
@@ -94,14 +94,12 @@ importLangDef = do
         file <- many1 alphaNum
         return $ Import file
 
-defineLangDef :: Parser Stmt
-defineLangDef = do
-        string "define"
+formatLangDef :: Parser Stmt
+formatLangDef = do
+        string "format"
         spaces
-        name <- many1 alphaNum
-        spaces
-        value <- natural
-        return $ Assign name (encode EncZ fromIntegral value) 0
+        formatter <- many1 alphaNum
+        return $ Assign "__FORMATTER__" (parseExpression formatter) 1
 
 ---- Info Parser
 whileInfo :: Parser Sequence
@@ -141,6 +139,7 @@ skidExpression = do
 ---- Expression Parser
 expression :: Parser Bλ
 expression =  idxExpression
+--          <|> try absCommented
           <|> absExpression
           <|> parens appExpression
           <|> synSugar
@@ -151,6 +150,15 @@ idxExpression = Idx <$> natural
 
 absExpression :: Parser Bλ
 absExpression = reservedOp "λ" *> (Abs <$> expression)
+
+absCommented :: Parser Bλ
+absCommented = do
+        reservedOp "λ"
+        manyTill letter (notFollowedBy (oneOf "λ."))
+        char '.';
+        whiteSpace
+        e <- expression
+        return $ Abs e
 
 appExpression :: Parser Bλ
 appExpression = foldl1 App <$> sepBy1 expression spaces

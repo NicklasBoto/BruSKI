@@ -87,7 +87,12 @@ generateTable ((Import file):ss) = do
     lib <- lift $ parseFile (Config.preludePath ++ file ++ ".bru")
     generateTable (lib ++ ss)
 
-generateTable [Express λ] = generate . expandExpression λ <$> get
+generateTable [Express λ] = do -- generate . expandExpression formatλ <$> get
+    table <- get
+    let formatλ = case lookup "__FORMATTER__" table of
+                        Just (f,_) -> App f λ
+                        Nothing    -> λ
+    return $ generate (expandExpression formatλ table)
 
 generateTable ((Assign name λ a):ss) = do
     curr <- get
