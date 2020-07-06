@@ -20,7 +20,11 @@ and might not work as expected.
 
 -- runs program strings
 run :: String -> IO Eλ
-run = showEλ . formatParse
+-- run = showEλ . formatParse
+run s = do
+    out <- showEλ (formatParse s)
+    putStr "\n=> "
+    return out
 
 -- passes the contents of a file to run, as a string
 runFile :: String -> IO Eλ
