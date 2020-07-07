@@ -131,6 +131,7 @@ toUnl λ  = g (fromIλ λ) where
     g (A l r) = '`' : g l ++ g r
     g (E (D s)) = '.' : s
     g (E V)     = "v"
+    g (E R)     = "r"
 
 compile :: String -> String
 compile = toUnl . translate . toIλ . parseExpression
