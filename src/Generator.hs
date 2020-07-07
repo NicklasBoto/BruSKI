@@ -25,13 +25,6 @@ import Translator
 import Control.Monad.State
 import Control.Monad
 
-{- ABSTRACTION AND FUNCTION APPLICATION
-
-id := λ 0 :: 1
-!! id{id}
-
--}
-
 {- SKID HANDLER
 Handle function in outside, then pass the escaped indeces in translator.
 
@@ -39,15 +32,7 @@ input = λ UNL{`k%0}
 l = UNL{`k} => `k
 r = λ0 => i
 l ++ r = `ki
-
-a := λ F{%0}
---> λ (F{}) (0)
-
 -}
-
-type Unlambda = String
-type Symbol = (String, (Bλ, Int))
-type SymbolTable = [Symbol]
 
 getFunction :: String -> SymbolTable -> (Bλ, Int)
 getFunction name table = case lookup name table of
@@ -70,8 +55,8 @@ expandExpression :: Bλ -> SymbolTable -> Bλ
 expandExpression λ table = eE λ where
     eE (Idx           n)  = Idx n
     eE (Unl           s)  = Unl s
-    eE (Abs (App EncZ r)) = toPrint $  show   (1 + decode r)
-    eE (Abs (App EncX r)) = toPrint $ [toChar (1 + decode r)]
+    eE (Abs (App EncZ r)) = toPrint (show   (1 + decode r))
+    eE (Abs (App EncX r)) = toPrint [toChar (1 + decode r)]
     eE (Abs           λ)  = Abs (eE λ)
     eE (App         l r)  = App (eE l) (eE r)
     eE (Fun   name args)  = let  (function, arity) = getFunction name table in 
@@ -87,7 +72,7 @@ generateTable ((Import file):ss) = do
     lib <- lift $ parseFile (Config.preludePath ++ file ++ ".bru")
     generateTable (lib ++ ss)
 
-generateTable [Express λ] = do -- generate . expandExpression formatλ <$> get
+generateTable [Express λ] = do
     table <- get
     let formatλ = case lookup "__FORMATTER__" table of
                         Just (f,_) -> App f λ
@@ -105,7 +90,7 @@ genString s = runStateT (generateTable . parseString $ s) []
 
 runString :: String -> IO Eλ
 runString s = do
-    prog <- liftM fst . genString $ s
+    prog <- fmap fst . genString $ s
     Unlambda.run prog
 
 genFile :: FilePath -> IO (Unlambda, SymbolTable)
@@ -115,7 +100,7 @@ genFile f = do
 
 runFile :: FilePath -> IO Eλ
 runFile f = do
-    prog <- liftM fst . genFile $ f
+    prog <- fmap fst . genFile $ f
     Unlambda.run prog
 
 -- TODO: 

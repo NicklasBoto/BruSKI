@@ -2,7 +2,7 @@
 
 module AST
         ( Stmt (Assign, Express, Import)
-        , Sequence
+        , Sequence, Unlambda, Symbol, SymbolTable
         , Bλ (Idx, Abs, App, Unl, EncZ, EncX, Prc, Fun)
         , Iλ (Idx1, Abs1, App1, S1, K1, I1, Unl1)
         ) where
