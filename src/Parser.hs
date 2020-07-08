@@ -34,7 +34,8 @@ wrapSpace func = do
 ---- Statement Parser
 whileParser :: Parser Sequence
 whileParser = do
-        ld <- whileIDSL <|> return []
+        whiteSpace
+        ld <- whileIDSL <|> return [] -- FIXME no mult. IDSLs 
         s <- manyTill sequentStatement eof
         return $ ld ++ s
 
@@ -125,7 +126,7 @@ forCompiler =  funcExpression
 
 funcExpression :: Parser Bλ
 funcExpression = do
-        name <- many1 alphaNum
+        name <- identifier
         spaces
         args <- braces (sepBy (wrapSpace expression) comma) <|> return []
         return $ Fun name args
