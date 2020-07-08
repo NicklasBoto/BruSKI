@@ -39,7 +39,7 @@ syn cluster bruCommentGrp  contains=bruCommentTodo
 syn region  bruComment  start="--" skip="\\$" end="$" keepend contains=@bruCommentGrp
 syn region  bruComment  start="{-" end="-}" contains=@bruCommentGrp
 syn region  bruAnnounce start="--!--" skip="\\$" end="$" keepend contains=@bruCommentGrp
-syn match   bruAbsComment /\w\+\./
+syn match   bruAbsComment /λ\w\+\./
 
 hi def link bruCommentTodo Todo
 hi def link bruComment     Comment
