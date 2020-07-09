@@ -194,4 +194,4 @@ out := λ (chs{0} (λ0)) :: 1
 Another, with syntax highlighting!
 
 
-![example](./example.png?raw=true "Example")
+![banner](./example.png?raw=true "Example")
