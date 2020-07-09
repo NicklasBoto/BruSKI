@@ -36,6 +36,13 @@ add{a,b}
 cons{$a,cons{$b, nil}}
 +}
 
+{+ from=[ to=] sep=,
+for arg do
+    cons{$,
+endfor
+endwith nil <+> for $ do }
++}
+
 {+ #$a
 INT{$a}
 +}
