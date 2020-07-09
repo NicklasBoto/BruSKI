@@ -3,7 +3,7 @@
 module AST
         ( Stmt (Assign, Express, Import)
         , Sequence, Unlambda, Symbol, SymbolTable
-        , Bλ (Idx, Abs, App, Unl, EncZ, EncX, Prc, Fun)
+        , Bλ (Idx, Abs, App, Unl, Fun)
         , Iλ (Idx1, Abs1, App1, S1, K1, I1, Unl1)
         ) where
 
@@ -20,9 +20,6 @@ data Bλ = Idx Integer
         | Abs Bλ
         | App Bλ Bλ
         | Unl String
-        | EncZ -- From here on down are compiler specific values
-        | EncX
-        | Prc Integer
         | Fun String [Bλ]
         deriving Eq
 
@@ -58,21 +55,10 @@ instance {-# OVERLAPPING #-} Show SymbolTable where
 
 instance Show Bλ where
         show (Idx x)            = show x
-        show (Abs (App EncZ r)) = "ζ(" ++  show   (1 + decode r)  ++ ")"
-        show (Abs (App EncX r)) = "ξ(" ++ [toChar (1 + decode r)] ++ ")"
         show (Abs s)            = "λ " ++ show s
         show (App l r)          = show l ++ " (" ++ show r ++ ")"
         show (Unl s)            = "{" ++ s ++ "}"
-        show (EncZ)             = "ζ"
-        show (EncX)             = "ξ"
-        show (Prc x)            = "%" ++ show x
         show (Fun s a)          = show s ++ show a
-
-decode :: Bλ -> Integer
-decode (Idx 0)      = 0
-decode (App EncZ b) = 1 + decode b
-decode (App EncX b) = 1 + decode b
-decode (Abs b)      = decode b
 
 toChar :: Integer -> Char
 toChar = toEnum . fromInteger

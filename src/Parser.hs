@@ -75,7 +75,6 @@ getArity expr = do
 ---- Isolated DSL parser (IDSL)
 whileIDSL :: Parser Sequence
 whileIDSL =  whileLangDef
-         <|> whileInfo
 
 ---- Language Definiton Statement Parser
 whileLangDef :: Parser Sequence
@@ -102,28 +101,6 @@ formatLangDef = do
         formatter <- many1 alphaNum
         return $ Assign "__FORMATTER__" (parseExpression formatter) 1
 
----- Info Parser
-whileInfo :: Parser Sequence
-whileInfo = string "{?" *> manyTill infoStmt (string "?}")
-
-infoStmt :: Parser Stmt
-infoStmt = wrapSpace sequentInfo
-
-sequentInfo :: Parser Stmt
-sequentInfo =  authorInfo
-
-authorInfo :: Parser Stmt
-authorInfo = do
-        string "author"
-        spaces
-        author <- many1 alphaNum
-        return $ Assign author (encode EncZ fromIntegral 1) 0
-
----- Compiler Specific Expression Parser (CSEP)
-forCompiler :: Parser Bλ
-forCompiler =  funcExpression
-           <|> skidExpression
-
 funcExpression :: Parser Bλ
 funcExpression = do
         name <- identifier
@@ -131,20 +108,14 @@ funcExpression = do
         args <- braces (sepBy (wrapSpace expression) comma) <|> return []
         return $ Fun name args
 
-skidExpression :: Parser Bλ
-skidExpression = do
-        reservedOp "%"
-        index <- toInteg <$> many1 digit
-        return $ Prc index
-
 ---- Expression Parser
 expression :: Parser Bλ
 expression =  idxExpression
---          <|> try absCommented
+--        <|> try absCommented
           <|> absExpression
           <|> parens appExpression
           <|> synSugar
-          <|> forCompiler
+          <|> funcExpression
 
 idxExpression :: Parser Bλ
 idxExpression = Idx <$> natural
@@ -158,8 +129,7 @@ absCommented = do
         manyTill letter (notFollowedBy (oneOf "λ."))
         char '.';
         whiteSpace
-        e <- expression
-        return $ Abs e
+        Abs <$> expression
 
 appExpression :: Parser Bλ
 appExpression = foldl1 App <$> sepBy1 expression spaces
@@ -170,9 +140,8 @@ synSugar =  unlP <|> prtP <|> intP <|> chrP
 unlP, intP, chrP :: Parser Bλ
 unlP = try $ string "UNL" *> (Unl <$> braces (many1 (noneOf "}")))
 prtP = try $ string "PRT" *> (toPrint <$> braces (many1 (noneOf "}")))
-intP = try $ string "INT" *> (encode EncZ toInt <$> braces (many1 digit))
-chrP = try $ string "CHR" *> (encode EncX ord <$> braces anyChar)
-
+intP = try $ string "INT" *> (encode toInt <$> braces (many1 digit))
+chrP = try $ string "CHR" *> (encode ord <$> braces anyChar)
 
 ---- User Input, Debug
 parseString :: String -> Sequence

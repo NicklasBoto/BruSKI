@@ -1,6 +1,5 @@
 module Encoding
         ( encode
-        , decode
         , countLambda
         , toInteg
         , toInt
@@ -19,14 +18,8 @@ toPrint :: String -> Bλ
 toPrint s = Unl $ pr ++ '.' : intersperse '.' s ++ "i"
         where pr = replicate (length s) '`'
 
-encode :: Bλ -> (a -> Int) -> a -> Bλ
-encode e f c = Abs $ iterate (App e) (Idx 0) !! (f c)
-
-decode :: Bλ -> Integer
-decode (Idx 0)      = 0
-decode (App EncZ b) = 1 + decode b
-decode (App EncX b) = 1 + decode b
-decode (Abs b)      = decode b
+encode :: (a -> Int) -> a -> Bλ
+encode f c = Abs . Abs $ iterate (App (Idx 1)) (Idx 0) !! f c
 
 countLambda :: Bλ -> Integer
 countLambda (App l r) = countLambda l + countLambda r
