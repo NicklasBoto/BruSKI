@@ -1,15 +1,28 @@
 --!-- church numerals
 
+{! import list !}
+
 -- the successor function, ++
 succ := λλλ (1 (2 1 0)) :: 1
+
+-- the pred functions, --
+predF   := λ (pair (snd 0) (succ (snd 0)))
+predPc0 := (pair (λλ0) (λλ0)) :: 1
+pred    := λ (fst (0 predF predPc0))
 
 -- basic arithmetic functions
 add  := λλ  (0 succ 1)
 mul  := λλλ (2 (1 0)) :: 2
 exp  := λλ  (0 1)
+sub  := λλ  (0 pred 1)
+
+-- FIXME
+-- divide  := λλλλλ ((λ (λ (0 (λ (λλ0)) (λλ1))) 0 ((λλ0) 2 1) (2 (5 0 3 2 1))) (sub 4 3)) :: 2
+-- divide1 := Y{ divide }
+-- div     := λλ (divide1 (succ 1) 0)
 
 -- some numbers
-zero  := λλ0
+zero  := λλ0 :: 0
 one   := succ{zero }
 two   := succ{one  }
 three := succ{two  }
@@ -30,11 +43,11 @@ n256  := exp2{eight}
 n512  := exp2{nine }
 n1024 := exp2{ten  }
 
-
 -- synonyms
-+   := add
-*   := mul
-^   := exp
+++  := succ :: 1
++   := add  :: 2
+*   := mul  :: 2
+^   := exp  :: 2
 n0  := zero
 n1  := one
 n2  := two
@@ -50,3 +63,4 @@ n10 := ten
 -- formatting function
 -- prints the church encoded numeral as stars
 formatChurch := λ (0 UNL{.*} λ0) :: 1
+formatDots   := λ (0 UNL{..} λ0) :: 1

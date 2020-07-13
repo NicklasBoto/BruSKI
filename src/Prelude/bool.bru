@@ -22,15 +22,18 @@ xor  := λλ and{       or{1, 0}
               , not{ and{1, 0} }
               }
 
+-- conditionals, stupid but nice
+if  := λλλ (2 1 0)
+for := λλλ (2 1 0)
+
 -- synonyms
 ⊤  := T
 ⊥  := F
-∧  := and
-∨  := or
-¬  := not
-⊕  := xor
-⊻  := xor
+¬  := λ  not {0}
+∧  := λλ and {1, 0}
+∨  := λλ or  {1, 0}
+⊕  := λλ xor {1, 0}
+⊻  := λλ xor {1, 0}
 
 -- formatting function
-chs := λ (0 UNL{.T} UNL{.F})
 formatBool := λ (0 UNL{.T} UNL{.F} (λ0)) :: 1
