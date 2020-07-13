@@ -4,6 +4,7 @@ module Encoding
         , toInteg
         , toInt
         , toPrint
+        , toList
         , toChar
         ) where
 
@@ -17,6 +18,11 @@ import AST
 toPrint :: String -> Bλ
 toPrint s = Unl $ pr ++ '.' : intersperse '.' s ++ "i"
         where pr = replicate (length s) '`'
+
+toList :: [Bλ] -> Bλ
+toList = foldr cons nil
+        where cons a b = Fun "cons" [a, b]
+              nil  = Fun "nil"  []
 
 encode :: (a -> Int) -> a -> Bλ
 encode f c = Abs . Abs $ iterate (App (Idx 1)) (Idx 0) !! f c
