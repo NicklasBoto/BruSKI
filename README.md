@@ -67,20 +67,6 @@ Expressions are written in de Bruijn indexed lambda calculus. A variable is repr
 | λa.λb.a            | λλ 1          |
 | λx.x               | λ 0           |
 
-### Assignment
-
-Expressions can be assigned to identifiers using the _:=_ operator. This will evaluate the expression and place it in a symbol table (explained below). 
-
-Specifying the arity of the function, with the _::_ operator, will control the number of entries to the symbol table.
-Omitting this will cause the compiler to generate one entry per bound variable (plus one for the symbol itself).
-Note that this is really only useful when you want to restrict the user, by throwing an error when a combinator is not found in the symbol table.
-
-```
-x := λ0              :: 1
-y := λλ0             :: 2
-z := λλλ (1 0 (2 0)) :: 3
-```
-
 ### Application
 
 Functions are called by their name, with their arguments enclosed in curly brackets.
@@ -91,6 +77,21 @@ FUNC_NAME{VAR1, VAR2, ...}
 
 Note that the number of variables are free to vary, as long as it is less than or equal to the arity of the function.
 Not applying the full amount of arguments will result in partial application, and another function is returned.
+
+It is perfectly fine to call functions by applying them to each other, in a Haskell-like syntax.
+
+```
+(FUNC_NAME VAR1 VAR2) => ((FUNC_NAME VAR1) VAR2)
+```
+
+This is semantically equivalent to the previous syntax, but less powerful. This is because the compiler does not check the arity of the function, nor can you format the application on multiple rows.
+
+### The (:=) operator
+Expressions can be assigned to identifiers using the _:=_ operator. This will place the expression in the symbol table after it is expanded.
+
+```
+zero := λλ0 :: 0
+```
 
 ### The (::) operator
 As you might have seen earlier in the file, (::) follow every assignment expresssion. It will assign a arity to the written expression. This is not necessary however, since the compiler will assign the correct arity to the function if (::) is left out. This can be used to restrict the use of encoded expressions by assigning a arity lower that the actual one.
