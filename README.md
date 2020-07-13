@@ -4,7 +4,7 @@
 
 ### "DeBruijn to SKI" Untyped language that compiles to Unlambda.
 Haskell project that aims to show that small abstractions to lambda calculus yield a surprisingly useful language.
-And in some part for me to investigate my interest in the interface between lambda calculus and combinator calculus.
+And in some part for me to investigate my interest in the interface between lambda calculus and combinatory logic.
 
 ## Installation
 Note that this is in alpha, so expect some bugs and missing features. Feel free to open an issue if you find a bug that is not listed!
@@ -45,11 +45,11 @@ $ bruc
 - [x] [Syntactic Sugar / Encodings](src/Encoding.hs)
 - [x] [Lambda Translation](src/Generator.hs)
 - [x] [Code Generation](src/Generator.hs)
-- [x] [Index Escape Delimiter Handling](src/Generator.hs)
-- [x] Symbol Table Generation / Management
-- [x] Unl Interpreter Integration
-- [x] Syntax Highlighting
-- [ ] Code Optimization
+- [x] [Symbol Table Generation / Management](src/Generator.hs)
+- [x] [Unl Interpreter Integration](app/Main.hs)
+- [x] [Syntax Highlighting](syntax/BruSKI.vim)
+- [x] [CLI tool](app/Main.hs)
+- [ ] Code Optimization / β-reducer
 - [ ] Isolated DSLs
 - [ ] Lisp Style Macros
 
@@ -93,12 +93,19 @@ Note that the number of variables are free to vary, as long as it is less than o
 Not applying the full amount of arguments will result in partial application, and another function is returned.
 
 ### The (::) operator
-As you might have seen earlier in the file, (::) follow every assignment expresssion. It will assign a arity to the written expression. This is not necessary however, since the compiler will assign the correct arity to the function if (::) is left out. This can be used to restrict the use of encoded expressions by assigning a arity lower that the actual one (assigning one higher is not possible).
+As you might have seen earlier in the file, (::) follow every assignment expresssion. It will assign a arity to the written expression. This is not necessary however, since the compiler will assign the correct arity to the function if (::) is left out. This can be used to restrict the use of encoded expressions by assigning a arity lower that the actual one.
 
 Take the successor function in the church encoding. The expression has three binders (where the two latter ones are used for encoding) but we never want the function to accept more than one argument, the number to increment. Therefore we assign it the arity one, with the (::) operator.
 
 ```
 succ := λλλ (1 (2 1 0)) :: 1
+```
+
+Assigning arities higher than the amount of binders is also possible, but rarely used. One example where this is useful is when η-reducing assignments.
+
+```
++   := λλ add{1, 0} -- non η-reduced
++   := add :: 2     -- η-reduced
 ```
 
 ### The (!!) operator
@@ -120,36 +127,42 @@ equivalent to the 'true' function
 
 ### Built-ins
 
-Some built-in "syntactic sugar" functions are included, for ease of use. These include functions for encoding types in lambda expressions and language conversions to Unlambda.
+Some built-in "syntactic sugar" functions are included, for ease of use. These include functions for encoding types in lambda expressions and language conversions to Unlambda. All encodings act essentially like macros, expanding into pure BruSKI code in the compiler.
 
 #### INT
 
-_INT_ converts natural numbers to their church encoding. Note that concatenations of different encodings will defer to the highest ranked encoder (i.e the outermost encoding).
+_INT_ converts natural numbers to their church encoding.
 
 ```
-INT{2} => λ ζ{ζ{0}}
+INT{2} => succ{succ{λλ0}}
 ```
 
 #### CHR
 
-_CHR_ encodes a character like the Church encoding with its ASCII value being encoded. Note the use of a different successor function ξ, as this encoding is treated differently by the compiler.
+_CHR_ encodes a character like the Church encoding with its ASCII integer value being encoded.
 
 ```
-CHR{d} => λ ξ{ξ{ξ{and so on...}}}
+CHR{d} => INT{100}
 ```
+
+#### Lists, \[,\]
+
+Because of the clunky syntax, lists can be encoded in the standard `[a, b, c]` way.
+
+```
+-- These are the same
+list := cons{a, cons{b, cons{c, nil}}}
+list := [a, b, c]
+```
+
+Note that you have to include the list library from prelude when using this syntax.
 
 #### UNL
 
-Alternatively, expressions can be written in Unlambda using the _UNL_ function.
+Expressions can be written in Unlambda using the _UNL_ function. This enables the programmer to use more powerful features (printing, call-with-current-continuation, input, etc.).
 
 ```
 UNL{```.H.i.!i}
-```
-
-You can use _%_ to use DeBruijn indeces inside the UNL function.
-
-```
-λ UNL{`.%0}
 ```
 
 #### PRT
@@ -169,7 +182,7 @@ The characters _--_ (double dash) denote comments. Multiline comments use the sy
 kComb {- the K-combinator -} := λλ 1 :: 2
 ```
 
-### Example
+## Example
 
 ```
 {! import bools !}
@@ -195,3 +208,6 @@ Another, with syntax highlighting!
 
 
 ![banner](./example.png?raw=true "Example")
+
+## Contributing
+You are welcome to open issues if you find bugs, but I'm currently not accepting pull requests. Although this might be silly, I want to finish this project alone.
