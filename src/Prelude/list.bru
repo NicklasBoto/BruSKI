@@ -16,5 +16,6 @@ null := λ fst{0}               -- checks if a list is empty
 cons := λλ (pair F pair{1, 0}) -- create a list given a head and tail
 head := λ (fst (snd 0))
 tail := λ (snd (snd 0))
+get  := λλ head{(1 tail 0)}
 
 -- TODO formatting function for lists and pairs

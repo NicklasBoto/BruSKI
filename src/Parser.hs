@@ -19,6 +19,7 @@ import Text.ParserCombinators.Parsec
 
 ---- Language Import
 import Encoding
+import Config
 import Lexer
 import AST
 
@@ -66,8 +67,8 @@ getArity expr = do
     fullArity <- countArity expr
     reservedOp "::"
     arity <- natural
-
-    if arity > fullArity then
+ 
+    if (arity > fullArity) && Config.arityBlock then
         error "Parse Error\narity cannot be higher than the number of binders"
     else
         return arity
@@ -116,6 +117,7 @@ expression =  idxExpression
           <|> parens appExpression
           <|> synSugar
           <|> funcExpression
+          <|> listP
 
 idxExpression :: Parser Bλ
 idxExpression = Idx <$> natural
@@ -142,6 +144,9 @@ unlP = try $ string "UNL" *> (Unl <$> braces (many1 (noneOf "}")))
 prtP = try $ string "PRT" *> (toPrint <$> braces (many1 (noneOf "}")))
 intP = try $ string "INT" *> (encode toInt <$> braces (many1 digit))
 chrP = try $ string "CHR" *> (encode ord <$> braces anyChar)
+
+listP :: Parser Bλ
+listP = toList <$> brackets (sepBy expression comma)
 
 ---- User Input, Debug
 parseString :: String -> Sequence

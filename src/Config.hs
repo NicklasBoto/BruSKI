@@ -1,6 +1,6 @@
 module Config
         ( preludePath
-        , arityBlocker
+        , arityBlock
         ) where
 
 
@@ -15,5 +15,5 @@ decided to do it this way temporarily.
 preludePath  = "/home/nicbot/Programming/BruSKI/src/Prelude/"
 
 -- Whether or not to allow arity higher that the number of binders
-arityBlocker = False
+arityBlock = False
 

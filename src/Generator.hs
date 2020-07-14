@@ -31,7 +31,7 @@ getFunction name table = case lookup name table of
     Nothing -> error $ "Generator Error\nfunction " ++ name ++ " does not exist"
 
 prependTable :: Symbol -> StateT SymbolTable IO ()
-prependTable s = state $ \ss -> ((), (s:ss))
+prependTable s = state $ \ss -> ((), s:ss)
 
 partialApply :: Integer -> Unlambda -> [Unlambda]
 partialApply arity unl = take (fromInteger arity + 1) (iterate ('`':) unl)

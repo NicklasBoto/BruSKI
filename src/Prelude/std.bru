@@ -9,24 +9,37 @@ import church
 ----- contains all of prelude
 ----- aswell as some useful functions
 
+--!-- nice
+-- the nth fibonacci number
+fib := λ (0 (λλλ (2 0 (add 0 1))) K n0 n1) :: 1
 
---!-- general functions
--- checks whether a numeral is 0
+-- the iota combinator
+ι  := λ (0 S K)
+
+-- church 0, using iota
+i0 := ((ι (ι (ι ι))) (ι ι))
+
+--!-- predicates
 isZero := λ (0 (λ F) T) :: 1
-
+leq    := λλ (isZero (sub 1 0))
+eq     := λλ and {(leq 1 0), (leq 0 1)}
 
 --!-- formatters
-lst := cons{ UNL{.0}
-     , cons{ UNL{.1}
-     , cons{ UNL{.2}
-     , cons{ UNL{.3}
-     , cons{ UNL{.4}
-     , cons{ UNL{.5}
-     , cons{ UNL{.6}
-     , cons{ UNL{.7}
-     , cons{ UNL{.8}
-     , cons{ UNL{.9}
-     , nil}}}}}}}}}}
+lst := cons{ UNL{.0}, cons{ UNL{.1}, cons{ UNL{.2}, cons{ UNL{.3}, cons{ UNL{.4}
+     , cons{ UNL{.5}, cons{ UNL{.6}, cons{ UNL{.7}, cons{ UNL{.8}, cons{ UNL{.9}
+     , cons{ UNL{.a}, cons{ UNL{.b}, cons{ UNL{.c}, cons{ UNL{.d}, cons{ UNL{.e}
+     , cons{ UNL{.f}, cons{ UNL{.g}, cons{ UNL{.h}, cons{ UNL{.i}, cons{ UNL{.j}
+     , cons{ UNL{.k}, cons{ UNL{.l}, cons{ UNL{.m}, cons{ UNL{.n}, cons{ UNL{.o}
+     , cons{ UNL{.p}, cons{ UNL{.q}, cons{ UNL{.r}, cons{ UNL{.s}, cons{ UNL{.t}
+     , cons{ UNL{.u}, cons{ UNL{.v}, cons{ UNL{.w}, cons{ UNL{.x}, cons{ UNL{.y}
+     , cons{ UNL{.z}, cons{ UNL{.å}, cons{ UNL{.ä}, cons{ UNL{.ö}, cons{ UNL{.A}
+     , cons{ UNL{.B}, cons{ UNL{.C}, cons{ UNL{.D}, cons{ UNL{.E}, cons{ UNL{.F}
+     , cons{ UNL{.G}, cons{ UNL{.H}, cons{ UNL{.I}, cons{ UNL{.J}, cons{ UNL{.K}
+     , cons{ UNL{.L}, cons{ UNL{.M}, cons{ UNL{.N}, cons{ UNL{.O}, cons{ UNL{.P}
+     , cons{ UNL{.Q}, cons{ UNL{.R}, cons{ UNL{.S}, cons{ UNL{.T}, cons{ UNL{.U}
+     , cons{ UNL{.V}, cons{ UNL{.W}, cons{ UNL{.X}, cons{ UNL{.Y}, cons{ UNL{.Z}
+     , cons{ UNL{.Å}, cons{ UNL{.Ä}, cons{ UNL{.Ö}, cons{ UNL{.*}, cons{ UNL{.!}
+     , nil}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 
 -- prints numbers instead of stars
-formatChurchLst := λ (head{((0 tail) lst)} λ0)
+formatGreat := λ (get{0, lst} λ0) :: 1

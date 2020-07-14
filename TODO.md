@@ -50,6 +50,18 @@ INT{$a}
 {+ @$a
 CHR{$a}
 +}
+
+{+ (+)
+
+{! import church !}
+__0__ := INT{$0}
+__1__ := INT{$1}
+!! add{ __0__ , __1__ }
+
++}
+
+-- 2 + 2 -> INT{4}
+
 ```
 
 I'm not sure whether the macro body should be defined in Haskell (with code injection), or BruSKI.
