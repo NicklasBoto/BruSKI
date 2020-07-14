@@ -156,7 +156,17 @@ list := cons{a, cons{b, cons{c, nil}}}
 list := [a, b, c]
 ```
 
-Note that you have to include the list library from prelude when using this syntax.
+You can also map other encoding functions onto lists.
+
+```
+nums := [INT{1}, INT{2}, INT{3}] -- instead of this
+nums := INT[1, 2, 3]             -- do this
+
+unls := UNL[s,k,i,.X,v]
+str  := "Looks Nice!" -- CHR gets special treatment
+```
+
+Note that, since these are macros and just expand to other code, you have to include the list library from prelude when using this syntax.
 
 #### UNL
 
