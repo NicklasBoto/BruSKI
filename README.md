@@ -224,7 +224,7 @@ Another, with syntax highlighting!
 Simplified overview of the compiler.
 ![compover](./compiler-overview.svg)
 
-The ASTs used in the compiler are described below.
+The ASTs used in the compiler are described below, in Backus-Naur form.
 ```
 -- BruSKI statements                                       -- DeBruijn statements
 <Stmt> ::= Assign <String> <Bλ> <Integer> -- (:=)       ;  <Bλ> ::= Idx <Integer>       -- DeBruijn indeces
