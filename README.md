@@ -220,5 +220,9 @@ Another, with syntax highlighting!
 
 ![banner](./example.png?raw=true "Example")
 
+## Compiler Architecture
+Simplified overview of the compiler.
+![compover](./compiler-overview.svg)
+
 ## Contributing
 You are welcome to open issues if you find bugs, but I'm currently not accepting pull requests. Although this might be silly, I want to finish this project alone.
