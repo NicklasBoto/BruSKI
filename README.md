@@ -105,8 +105,8 @@ succ := λλλ (1 (2 1 0)) :: 1
 Assigning arities higher than the amount of binders is also possible, but rarely used. One example where this is useful is when η-reducing assignments.
 
 ```
-+   := λλ add{1, 0} -- non η-reduced
-+   := add :: 2     -- η-reduced
++ := λλ add{1, 0} -- non η-reduced
++ := add :: 2     -- η-reduced
 ```
 
 ### The (!!) operator
@@ -146,7 +146,7 @@ _CHR_ encodes a character like the Church encoding with its ASCII integer value 
 CHR{d} => INT{100}
 ```
 
-#### Lists, \[,\]
+#### Lists
 
 Because of the clunky syntax, lists can be encoded in the standard `[a, b, c]` way.
 
@@ -154,6 +154,12 @@ Because of the clunky syntax, lists can be encoded in the standard `[a, b, c]` w
 -- These are the same
 list := cons{a, cons{b, cons{c, nil}}}
 list := [a, b, c]
+```
+
+Tuples are defined similarly.
+
+```
+tuple := <a,b>
 ```
 
 You can also map other encoding functions onto lists.
