@@ -59,7 +59,7 @@ BruSKI uses variable abstraction and lambda notation that evaluates to Unlambda.
 
 ### Expressions
 
-Expressions are written in de Bruijn indexed lambda calculus. A variable is represented as the number of binders that are in scope of its binder (staring from 0, which is non-standard).
+Expressions are written in de Bruijn indexed lambda calculus. A variable is represented as the number of binders that are in scope of its binder (starting from 0, which is non-standard).
 
 | Standard           | De Bruijn     |
 |--------------------|---------------|
