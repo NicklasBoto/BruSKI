@@ -232,12 +232,17 @@ Simplified overview of the compiler.
 
 The ASTs used in the compiler are described below, in Backus-Naur form.
 ```
--- BruSKI statements                                       -- DeBruijn statements
-<Stmt> ::= Assign <String> <Bλ> <Integer> -- (:=)       ;  <Bλ> ::= Idx <Integer>       -- DeBruijn indeces
-         | Express <Bλ>			  -- (!!)       ;         | Abs <Bλ>            -- Lambda abstractions
-	 | Import <String>		  -- (import)   ;         | App <Bλ> <Bλ>       -- Application
-	       				                ;         | Unl <String>        -- Unlambda injection
-					                ;         | Fun <String> [<Bλ>] -- Functions
+-- BruSKI statements
+<Stmt> ::= Assign <String> <Bλ> <Integer> -- (:=)
+         | Express <Bλ>			  -- (!!)
+	 | Import <String>		  -- (import)
+
+-- DeBruijn statements
+<Bλ> ::= Idx <Integer>       -- DeBruijn indeces
+       | Abs <Bλ>            -- Lambda abstractions
+       | App <Bλ> <Bλ>       -- Application
+       | Unl <String>        -- Unlambda injection
+       | Fun <String> [<Bλ>] -- Functions
 
 -- Intermediate representation
 -- a mix of DeBruijn and SKI terms
