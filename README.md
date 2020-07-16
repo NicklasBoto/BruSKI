@@ -220,5 +220,36 @@ Another, with syntax highlighting!
 
 ![banner](./example.png?raw=true "Example")
 
+## Compiler Architecture
+Simplified overview of the compiler.
+![compover](./compiler-overview.svg)
+
+The ASTs used in the compiler are described below, in Backus-Naur form.
+```
+-- BruSKI statements                                       -- DeBruijn statements
+<Stmt> ::= Assign <String> <Bλ> <Integer> -- (:=)       ;  <Bλ> ::= Idx <Integer>       -- DeBruijn indeces
+         | Express <Bλ>			  -- (!!)       ;         | Abs <Bλ>            -- Lambda abstractions
+	 | Import <String>		  -- (import)   ;         | App <Bλ> <Bλ>       -- Application
+	       				                ;         | Unl <String>        -- Unlambda injection
+					                ;         | Fun <String> [<Bλ>] -- Functions
+
+-- Intermediate representation
+-- a mix of DeBruijn and SKI terms
+<Iλ> ::= <Bλ> | S | K | I
+
+--!-- Other structures
+
+-- Entries in the symbol table
+<Symbol> ::= (<String>, (<Bλ>, <Int>))
+
+-- Lexed tokens
+<Token>  ::= "∧∨⇔↔⇒→⊕⊻⩒¬←∀⋀∃⋁⩒∄⊢⊨⊤⊥∴∵∇∆∫∮≤≥≠±∓ℵℶ𝔠ℕℤℚℝℂ⊂⊆∈∉∅+*^αβδεφγηιθκμνοπχρστυξψζΑΒΔΕΦΓΗΙΘΚΛΜΝΟΠΧΡΣΤΥΞΨΖ" 
+           | <alphaNumeric>
+	   | "{-"  | "-}   | "--"
+	   | "UNL" | "INT" | "CHR" | "PRT"
+	   | ":="  | "!!"  | "::"  | "λ"
+	   | " "   | "()"  | "{}"  | "[]" | "<>" | ","
+```
+
 ## Contributing
 You are welcome to open issues if you find bugs, but I'm currently not accepting pull requests. Although this might be silly, I want to finish this project alone.
