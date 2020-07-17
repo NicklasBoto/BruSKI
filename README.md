@@ -1,6 +1,6 @@
 # BruSKI
 
-![banner](./BruSKI-banner.jpg?raw=true "Title")
+![banner](images/BruSKI-banner.jpg?raw=true "Title")
 
 ### "DeBruijn to SKI" Untyped language that compiles to Unlambda.
 Haskell project that aims to show that small abstractions to lambda calculus yield a surprisingly useful language.
@@ -224,11 +224,11 @@ out := λ (chs{0} (λ0)) :: 1
 Another, with syntax highlighting!
 
 
-![banner](./example.png?raw=true "Example")
+![banner](images/example.png?raw=true "Example")
 
 ## Compiler Architecture
 Simplified overview of the compiler.
-![compover](./compiler-overview.svg)
+![compover](images/compiler-overview.svg)
 
 The ASTs used in the compiler are described below, in Backus-Naur form.
 ```
