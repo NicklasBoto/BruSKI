@@ -1,6 +1,6 @@
 # BruSKI
 
-![banner](./BruSKI-banner.jpg?raw=true "Title")
+![banner](images/BruSKI-banner.jpg?raw=true "Title")
 
 ### "DeBruijn to SKI" Untyped language that compiles to Unlambda.
 Haskell project that aims to show that small abstractions to lambda calculus yield a surprisingly useful language.
@@ -59,7 +59,7 @@ BruSKI uses variable abstraction and lambda notation that evaluates to Unlambda.
 
 ### Expressions
 
-Expressions are written in de Bruijn indexed lambda calculus. A variable is represented as the number of binders that are in scope of its binder (staring from 0, which is non-standard).
+Expressions are written in de Bruijn indexed lambda calculus. A variable is represented as the number of binders that are in scope of its binder (starting from 0, which is non-standard).
 
 | Standard           | De Bruijn     |
 |--------------------|---------------|
@@ -105,8 +105,8 @@ succ := λλλ (1 (2 1 0)) :: 1
 Assigning arities higher than the amount of binders is also possible, but rarely used. One example where this is useful is when η-reducing assignments.
 
 ```
-+   := λλ add{1, 0} -- non η-reduced
-+   := add :: 2     -- η-reduced
++ := λλ add{1, 0} -- non η-reduced
++ := add :: 2     -- η-reduced
 ```
 
 ### The (!!) operator
@@ -146,7 +146,7 @@ _CHR_ encodes a character like the Church encoding with its ASCII integer value 
 CHR{d} => INT{100}
 ```
 
-#### Lists, \[,\]
+#### Lists
 
 Because of the clunky syntax, lists can be encoded in the standard `[a, b, c]` way.
 
@@ -156,7 +156,23 @@ list := cons{a, cons{b, cons{c, nil}}}
 list := [a, b, c]
 ```
 
-Note that you have to include the list library from prelude when using this syntax.
+Tuples are defined similarly.
+
+```
+tuple := <a,b>
+```
+
+You can also map other encoding functions onto lists.
+
+```
+nums := [INT{1}, INT{2}, INT{3}] -- instead of this
+nums := INT[1, 2, 3]             -- do this
+
+unls := UNL[s,k,i,.X,v]
+str  := "Looks Nice!" -- CHR gets special treatment
+```
+
+Note that, since these are macros and just expand to other code, you have to include the list library from prelude when using this syntax.
 
 #### UNL
 
@@ -208,7 +224,43 @@ out := λ (chs{0} (λ0)) :: 1
 Another, with syntax highlighting!
 
 
-![banner](./example.png?raw=true "Example")
+![banner](images/example.png?raw=true "Example")
+
+## Compiler Architecture
+Simplified overview of the compiler.
+![compover](images/compiler-overview.svg)
+
+The ASTs used in the compiler are described below, in Backus-Naur form.
+```
+-- BruSKI statements
+<Stmt> ::= Assign <String> <Bλ> <Integer> -- (:=)
+         | Express <Bλ>			  -- (!!)
+	 | Import <String>		  -- (import)
+
+-- DeBruijn statements
+<Bλ> ::= Idx <Integer>       -- DeBruijn indeces
+       | Abs <Bλ>            -- Lambda abstractions
+       | App <Bλ> <Bλ>       -- Application
+       | Unl <String>        -- Unlambda injection
+       | Fun <String> [<Bλ>] -- Functions
+
+-- Intermediate representation
+-- a mix of DeBruijn and SKI terms
+<Iλ> ::= <Bλ> | S | K | I
+
+--!-- Other structures
+
+-- Entries in the symbol table
+<Symbol> ::= (<String>, (<Bλ>, <Int>))
+
+-- Lexed tokens
+<Token>  ::= "∧∨⇔↔⇒→⊕⊻⩒¬←∀⋀∃⋁⩒∄⊢⊨⊤⊥∴∵∇∆∫∮≤≥≠±∓ℵℶ𝔠ℕℤℚℝℂ⊂⊆∈∉∅+*^αβδεφγηιθκμνοπχρστυξψζΑΒΔΕΦΓΗΙΘΚΛΜΝΟΠΧΡΣΤΥΞΨΖ" 
+           | <alphaNumeric>
+	   | "{-"  | "-}   | "--"
+	   | "UNL" | "INT" | "CHR" | "PRT"
+	   | ":="  | "!!"  | "::"  | "λ"
+	   | " "   | "()"  | "{}"  | "[]" | "<>" | ","
+```
 
 ## Contributing
 You are welcome to open issues if you find bugs, but I'm currently not accepting pull requests. Although this might be silly, I want to finish this project alone.
