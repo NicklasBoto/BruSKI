@@ -23,6 +23,8 @@ i0 := ((ι (ι (ι ι))) (ι ι))
 isZero := λ (0 (λ F) T) :: 1
 leq    := λλ (isZero (sub 1 0))
 eq     := λλ and {(leq 1 0), (leq 0 1)}
+lt     := λλ not{leq{0, 1}}
+gt     := λλ not{leq{1, 0}}
 
 --!-- formatters
 lst := cons{ UNL{.0}, cons{ UNL{.1}, cons{ UNL{.2}, cons{ UNL{.3}, cons{ UNL{.4}
@@ -41,5 +43,10 @@ lst := cons{ UNL{.0}, cons{ UNL{.1}, cons{ UNL{.2}, cons{ UNL{.3}, cons{ UNL{.4}
      , cons{ UNL{.Å}, cons{ UNL{.Ä}, cons{ UNL{.Ö}, cons{ UNL{.*}, cons{ UNL{.!}
      , nil}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 
+numlst := UNL[.0, .1, .2, .3, .4, .5, .6, .7, .8, .9]
+
+chrlst := UNL[.X,.!,.X,.#,.$,.%,.&,.',.(,.),.*,.+,.X,.-,..,./,.0,.1,.2,.3,.4,.5,.6,.7,.8,.9,.:,.;,.<,.=,.>,.?,.@,.A,.B,.C,.D,.E,.F,.G,.H,.I,.J,.K,.L,.M,.N,.O,.P,.Q,.R,.S,.T,.U,.V,.W,.X,.Y,.Z,.[,.\,.X,.^,._,.X,.a,.b,.c,.d,.e,.f,.g,.h,.i,.j,.k,.l,.m,.n,.o,.p,.q,.r,.s,.t,.u,.v,.w,.x,.y,.z,.{,.|,.},.~]
+
 -- prints numbers instead of stars
-formatGreat := λ (get{0, lst} λ0) :: 1
+formatNumLst := λ (get{0, numlst} λ0) :: 1
+formatChrLst := λ (get{0, chrlst} λ0) :: 1
