@@ -5,6 +5,7 @@ module Lexer
         , parens
         , braces
         , brackets
+        , angles
         , natural
         , comma
         ) where
@@ -15,7 +16,7 @@ import qualified Text.ParserCombinators.Parsec.Token as Token
 
 ---- Character Definitions
 greek    = oneOf "αβδεφγηιθκμνοπχρστυξψζΑΒΔΕΦΓΗΙΘΚΛΜΝΟΠΧΡΣΤΥΞΨΖ"
-math     = oneOf "∧∨⇔↔⇒→⊕⊻⩒¬←∀⋀∃⋁⩒∄⊢⊨⊤⊥∴∵∇∆∫∮≤≥≠±∓ℵℶ𝔠ℕℤℚℝℂ⊂⊆∈∉∅+*^<>|"
+math     = oneOf "∧∨⇔↔⇒→⊕⊻⩒¬←∀⋀∃⋁⩒∄⊢⊨⊤⊥∴∵∇∆∫∮≤≥≠±∓ℵℶ𝔠ℕℤℚℝℂ⊂⊆∈∉∅+*^|"
 allChars = alphaNum <|> greek <|> math
 
 ---- Lexer Definition
@@ -45,6 +46,7 @@ whiteSpace = Token.whiteSpace lexer
 parens     = Token.parens     lexer
 braces     = Token.braces     lexer
 brackets   = Token.brackets   lexer
+angles     = Token.angles     lexer
 natural    = Token.natural    lexer
 comma      = Token.comma      lexer
 

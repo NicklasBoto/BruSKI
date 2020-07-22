@@ -99,7 +99,7 @@ formatLangDef :: Parser Stmt
 formatLangDef = do
         string "format"
         spaces
-        formatter <- many1 alphaNum
+        formatter <- many1 (alphaNum <|> oneOf "}{)(")
         return $ Assign "__FORMATTER__" (parseExpression formatter) 1
 
 funcExpression :: Parser Bλ
@@ -117,7 +117,7 @@ expression =  idxExpression
           <|> parens appExpression
           <|> synSugar
           <|> funcExpression
-          <|> listP
+          <|> listParser
 
 idxExpression :: Parser Bλ
 idxExpression = Idx <$> natural
@@ -137,16 +137,62 @@ appExpression :: Parser Bλ
 appExpression = foldl1 App <$> sepBy1 expression spaces
 
 synSugar :: Parser Bλ
-synSugar =  unlP <|> prtP <|> intP <|> chrP
+synSugar =  unlP
+        <|> prtP
+        <|> intP
+        <|> chrP
 
 unlP, intP, chrP :: Parser Bλ
-unlP = try $ string "UNL" *> (Unl <$> braces (many1 (noneOf "}")))
-prtP = try $ string "PRT" *> (toPrint <$> braces (many1 (noneOf "}")))
+unlP = try $ string "UNL" *> (Unl          <$> braces (many1 (noneOf "}")))
+prtP = try $ string "PRT" *> (toPrint      <$> braces (many1 (noneOf "}")))
 intP = try $ string "INT" *> (encode toInt <$> braces (many1 digit))
-chrP = try $ string "CHR" *> (encode ord <$> braces anyChar)
+chrP = try $ string "CHR" *> (encode ord32 <$> braces anyChar)
+        where ord32 x = ord x - 32
+
+listParser :: Parser Bλ
+listParser =  try unlL 
+          <|> try intL
+          <|> chrL
+          <|> listIndex
+          <|> listP
+          <|> pairP
+
+unlL :: Parser Bλ
+unlL = do
+        string "UNL"
+        unls <- brackets (sepBy (many1 $ noneOf "],") comma)
+        let mapU = map Unl unls
+        return $ toList mapU
+
+intL :: Parser Bλ
+intL = do
+        string "INT"
+        ints <- brackets (sepBy1 (many1 digit) comma)
+        let encI = map (encode toInt) ints
+        return $ toList encI
+
+chrL :: Parser Bλ
+chrL = do
+        char '"'
+        chrs <- manyTill anyChar (try (string "\""))
+        let encC = map (encode ord) chrs
+        return $ toList encC
+
+listIndex :: Parser Bλ
+listIndex = do
+        name <- identifier
+        idx  <- brackets (many1 digit)
+        return $ let eI = encode toInt idx 
+                 in  Fun "get" [eI, Fun name []]
 
 listP :: Parser Bλ
-listP = toList <$> brackets (sepBy expression comma)
+listP = toList <$> brackets (sepBy (wrapSpace expression) comma)
+
+pairP :: Parser Bλ
+pairP = toPair <$> angles (sepBy expression comma)
+        where toPair :: [Bλ] -> Bλ
+              toPair [a, b] = Fun "pair" [a, b]
+              toPair _      = error "Parse Error\ntoo many elements"
 
 ---- User Input, Debug
 parseString :: String -> Sequence

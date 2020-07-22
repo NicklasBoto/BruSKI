@@ -6,16 +6,16 @@
 pair  := λλλ (0 2 1) :: 2 -- 2-tuple constructor
 fst   := λ (0 (λλ1)) :: 1 
 snd   := λ (0 (λλ0)) :: 1
-flip  := λ pair { snd{0}
-                , fst{0}
-           } 
+flip  := λ <snd{0}, fst{0}>
 
 -- lists
-nil  := pair{T, T}             -- the empty list
+nil  := <T, T>                 -- the empty list
 null := λ fst{0}               -- checks if a list is empty
-cons := λλ (pair F pair{1, 0}) -- create a list given a head and tail
+cons := λλ <F, <1, 0>>         -- create a list given a head and tail
 head := λ (fst (snd 0))
 tail := λ (snd (snd 0))
 get  := λλ head{(1 tail 0)}
 
--- TODO formatting function for lists and pairs
+-- TODO formatting function for lists
+
+formatPair := λλ (UNL{.<} UNL{.,} (1 fst{0}) (1 snd{0}) UNL{.>} (λ0)) :: 1

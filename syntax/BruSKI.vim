@@ -34,6 +34,9 @@ syn match bruVar /\w\+/ nextgroup=bruAss
 syn match bruInt '\d\+'
 hi def link bruInt Number
 
+syn region  bruString start="\"" end="\""
+hi def link bruString String
+
 syn keyword bruCommentTodo contained TODO FIXME
 syn cluster bruCommentGrp  contains=bruCommentTodo
 syn region  bruComment  start="--" skip="\\$" end="$" keepend contains=@bruCommentGrp
