@@ -1,22 +1,7 @@
 # TODO (But not really)
 Ok I know, this is not really a TODO, this is mostly filled with ideas and such. But this filename got a really nice icon in vs code.
 
-## Change indentifier characters?
-Consider indentifier names. What should the indentStart and indentLetter (in src/Lexer.hs) be? Names like + and * are cool (maybe haskell style infix operators...), but require parser rework.
-
-## Pre-compile syntax style
-Change parser to use more "haskell style" syntax, for example the imports statements now use ` #import <file_name> `, which is ugly but make parsing easier.
-I want to minimize the amount of reserved keywords, so maybe a pre-compiler section in the program. This pre-compile stage might be in line with the planned typed dialect syntax.
-
-```
-{*
-
-import file1
-import file2
-
-*}
-```
-
+## Macros, dude
 And maybe some other {C / C} style for macro implementation and such. Where C is some character, like '-' for comments and '*' in the example above.
 
 ```
@@ -76,25 +61,46 @@ But with some syntacic sugaring.
 
 Ideas:
 
+```
 λ'x
 λx!
 λ:x
 λ@x
-λx.
+λx. -- This, obviously
+```
 
-## format language definition
-Would be nice to have som syntactic sugar for formatting functions, since I always seem to need one...
-Instead of defining a function and then appying it add the evaluation, we can define keyword in the 
-language definition IDSL, like:
+## Pattern Matching
+Kinda Haskell-like pattern matching..
+I might have to implement some Eq function in the compiler though..
 
--- Instead of
-out := λ (0 UNL{.*} λ0)
+```
+div       :: 2
+div{_,n0} := UNL{eZ}
+div{_,n1} := λλ1
+div{n1,_} := n0
+div{n0,_} := n0
+div       := λλ add{ n1,
+                div{ sub{1, 0}, 0}}
+```
 
-!! out{ λλ0 }
+Which would be the macro:
 
--- Something like this
-{! format λ (0 UNL{.*} λ0) !}
+```
+foo :: 1
+foo{n0} := n0
+foo     := n1
 
-!! λλ0
+-- expands to
 
-That is, a function that is always called first at the evaluator.
+foo := λ (
+    {-if  -} EQ{0, n0}
+    {-then-} n0
+    {-else-} n1
+    )
+```
+
+
+
+
+
+
