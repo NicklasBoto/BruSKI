@@ -1,0 +1,34 @@
+--!-- Figuring out β-reduction
+
+{! 
+import std
+format formatBool
+!}
+
+-- FIXME
+div := (Y{λλλλ(
+       {-if  -} lt{3, 2}   --  a < b
+       {-then-} pair{0, 3} -- <q , a>
+       {-else-} (1 succ{0} sub{3,2} 2)
+       )} INT{0}) :: 2
+
+a := "yeetsie"
+
+-- future syntax
+{--}
+{+ <.>
+λλλ (2 (1 0)) :: 2
++}
+
+putHead := formatChr . head               :: 1 -- this
+putHead := (λλλ (2 (1 0))) formatChr head :: 1 -- into this
+
+formatStr      :: 1
+formatStr{nil} := I
+formatStr      := λ (putHead{0} formatStr{tail{0}})
+
+formatStr{a} -- the (!!) operator is reduntant
+
+--}
+
+-- !! T
