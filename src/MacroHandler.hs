@@ -118,6 +118,11 @@ macroDefParser = manyTill anyChar (try macroEnd)
 
 
 ---- Runner
+parseSymbols :: MacroTable -> String -> String
+parseSymbols env str = case parse (creepMacros [] env) "Macro Error" str of
+                   Left  e -> error $ show e
+                   Right r -> r
+
 parseMacro :: String -> Macro
 parseMacro str = case parse macroParser "Macro Error" str of
                    Left  e -> error $ show e
