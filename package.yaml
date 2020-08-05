@@ -27,6 +27,11 @@ dependencies:
 - with-utf8
 - turtle
 - directory
+- split
+- extra
+- haskeline
+- repline
+- process
 
 library:
   source-dirs: src

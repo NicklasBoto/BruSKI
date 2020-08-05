@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d66d19cf358620a2ec3204d49776b5cf78da6d32282313541167e05a28c4f8c6
+-- hash: 24fb3835b925a0ed7055152276fa8c4ffb6006c79e842ed8c018ade4226206fb
 
 name:           BruSKI
 version:        0.4
@@ -50,8 +50,13 @@ library
       base >=4.7 && <5
     , containers
     , directory
+    , extra
+    , haskeline
     , mtl
     , parsec
+    , process
+    , repline
+    , split
     , turtle
     , with-utf8
   default-language: Haskell2010
@@ -68,8 +73,13 @@ executable bruc
     , base >=4.7 && <5
     , containers
     , directory
+    , extra
+    , haskeline
     , mtl
     , parsec
+    , process
+    , repline
+    , split
     , turtle
     , with-utf8
   default-language: Haskell2010
@@ -87,8 +97,13 @@ test-suite BruSKI-test
     , base >=4.7 && <5
     , containers
     , directory
+    , extra
+    , haskeline
     , mtl
     , parsec
+    , process
+    , repline
+    , split
     , turtle
     , with-utf8
   default-language: Haskell2010
