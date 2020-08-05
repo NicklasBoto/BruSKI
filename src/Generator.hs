@@ -5,6 +5,7 @@ module Generator
         , genString
         , genFile
         , runFile
+        , generateTable
         ) where
 
 ---- Language Import
