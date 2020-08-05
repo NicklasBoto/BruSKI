@@ -21,13 +21,6 @@ add{a,b}
 cons{$a,cons{$b, nil}}
 +}
 
-{+ from=[ to=] sep=,
-for arg do
-    cons{$,
-endfor
-endwith nil <+> for $ do }
-+}
-
 {+ #$a
 INT{$a}
 +}
@@ -36,16 +29,18 @@ INT{$a}
 CHR{$a}
 +}
 
-{+ (+)
-
-{! import church !}
-__0__ := INT{$0}
-__1__ := INT{$1}
-!! add{ __0__ , __1__ }
-
+{+ $a+$b
+{! import church.add !}
+!! add{INT{$a}, INT{$b}}
 +}
 
--- 2 + 2 -> INT{4}
+-- with haskell
+{+
+l <- natural
+char '+'
+r <- natural
+return $ Fun "add" (map (encode toInt) [l, r])
++}
 
 ```
 
@@ -67,11 +62,13 @@ Ideas:
 λ:x
 λ@x
 λx. -- This, obviously
+
+commented := λx.0
 ```
 
 ## Pattern Matching
-Kinda Haskell-like pattern matching..
-I might have to implement some Eq function in the compiler though..
+Kinda Haskell-like pattern matching.
+I might have to implement some Eq function in the compiler though...
 
 ```
 div       :: 2
@@ -80,13 +77,13 @@ div{_,n1} := λλ1
 div{n1,_} := n0
 div{n0,_} := n0
 div       := λλ add{ n1,
-                div{ sub{1, 0}, 0}}
+                div{ sub{1, 0}, 0}} -- and recursion
 ```
 
 Which would be the macro:
 
 ```
-foo :: 1
+foo     :: 1
 foo{n0} := n0
 foo     := n1
 
@@ -98,9 +95,3 @@ foo := λ (
     {-else-} n1
     )
 ```
-
-
-
-
-
-
