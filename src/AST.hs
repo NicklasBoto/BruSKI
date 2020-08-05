@@ -55,8 +55,8 @@ instance {-# OVERLAPPING #-} Show SymbolTable where
 
 instance Show Bλ where
         show (Idx x)            = show x
-        show (Abs s)            = "λ " ++ show s
-        show (App l r)          = show l ++ " (" ++ show r ++ ")"
+        show (Abs s)            = "λ" ++ show s
+        show (App l r)          = "(" ++ show l ++ "<-" ++ show r ++ ")"
         show (Unl s)            = "{" ++ s ++ "}"
         show (Fun s a)          = show s ++ show a
 
