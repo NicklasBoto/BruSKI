@@ -1,0 +1,48 @@
+-- functional composition
+{+ $l.$r; ((λλλ (2 (1 0))) $l $r) +}
+
+-- non-encoding arithmetic macros
+{+ $a*$b; mul{$a,$b} +}
+{+ $a+$b; add{$a,$b} +}
+{+ $a-$b; sub{$a,$b} +}
+
+-- encoding arithmetic macros
+{+ $a#*$b; mul{INT{$a},INT{$b}} +}
+{+ $a#+$b; add{INT{$a},INT{$b}} +}
+{+ $a#-$b; sub{INT{$a},INT{$b}} +}
+
+-- {+ $a==$b; eq{$a, $b} +}
+{+if;  +}
+{+then;+}
+{+else;+}
+
+-- {+ <,>$f$s; <$f,$s> +}
+{+ #$n; INT{$n} +}
+
+{-
+
+a := λ <,> (#1 + 0) r
+    where (r := fib{INT{0}})
+
+a := λ <(#1 + 0), r>
+    where (r := fib{INT{0}})
+
+a := λ <INT{1} + 0, r>
+    where (r := fib{INT{0}})
+
+a := λ <add{INT{1}, 0}, r>
+    where (r := fib{INT{0}}
+
+a := λ <add{INT{1}, 0}, fib{INT{0}}>
+
+!! (if a == b then foo{a} else foo{b})
+
+(
+if a == b then
+    foo{a}
+else
+    foo{b}
+)
+
+(eq{a, b} foo{a} foo{b})
+-}
