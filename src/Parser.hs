@@ -2,6 +2,7 @@ module Parser
         ( parseString
         , parseFile
         , parseExpression
+        , wrapSpace
         ) where
 
 {-
@@ -44,11 +45,11 @@ sequentStatement :: Parser Stmt
 sequentStatement = wrapSpace statement
 
 statement :: Parser Stmt
-statement =  expressStmt
-         <|> assignStmt
+statement =  try assignStmt
+         <|> expressStmt
 
 expressStmt :: Parser Stmt
-expressStmt = reservedOp "!!" *> (Express <$> expression)
+expressStmt = Express <$> expression
 
 assignStmt :: Parser Stmt
 assignStmt = do
@@ -125,6 +126,7 @@ idxExpression = Idx <$> natural
 absExpression :: Parser Bλ
 absExpression = reservedOp "λ" *> (Abs <$> expression)
 
+-- FIXME parses weird
 absCommented :: Parser Bλ
 absCommented = do
         reservedOp "λ"
@@ -146,8 +148,7 @@ unlP, intP, chrP :: Parser Bλ
 unlP = try $ string "UNL" *> (Unl          <$> braces (many1 (noneOf "}")))
 prtP = try $ string "PRT" *> (toPrint      <$> braces (many1 (noneOf "}")))
 intP = try $ string "INT" *> (encode toInt <$> braces (many1 digit))
-chrP = try $ string "CHR" *> (encode ord32 <$> braces anyChar)
-        where ord32 x = ord x - 32
+chrP = try $ string "CHR" *> (encode ord   <$> braces anyChar)
 
 listParser :: Parser Bλ
 listParser =  try unlL 
