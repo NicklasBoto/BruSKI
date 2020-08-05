@@ -1,5 +1,6 @@
 module Encoding
         ( encode
+        , decode
         , countLambda
         , toInteg
         , toInt
@@ -26,6 +27,12 @@ toList = foldr cons nil
 
 encode :: (a -> Int) -> a -> Bλ
 encode f c = Abs . Abs $ iterate (App (Idx 1)) (Idx 0) !! f c
+
+decode :: Bλ -> Int
+decode (Abs         λ) = decode λ
+decode (App (Idx 1) r) = 1 + decode r
+decode (Idx         0) = 0
+decode              _  = error "Not an int..."
 
 countLambda :: Bλ -> Integer
 countLambda (App l r) = countLambda l + countLambda r
