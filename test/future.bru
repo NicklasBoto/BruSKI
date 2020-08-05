@@ -2,7 +2,6 @@
 
 {! 
 import std
-format formatBool
 !}
 
 -- FIXME
@@ -12,16 +11,23 @@ div := (Y{λλλλ(
        {-else-} (1 succ{0} sub{3,2} 2)
        )} INT{0}) :: 2
 
-a := "yeetsie"
+a := INT[0, 1, 2]
 
 -- future syntax
-{--}
-{+ <.>
-λλλ (2 (1 0)) :: 2
+{j--
+{+ $l.$r
+   -- BruSKI
+   f := λλλ (2 (1 0)) :: 2
+   -- Haskell
+-- f    :: (b -> c) -> (a -> b) -> a -> c 
+-- f x y = \z -> x (y z)
 +}
 
 putHead := formatChr . head               :: 1 -- this
 putHead := (λλλ (2 (1 0))) formatChr head :: 1 -- into this
+
+putHead :: 1
+putHead := formatChr . head
 
 formatStr      :: 1
 formatStr{nil} := I
@@ -31,4 +37,4 @@ formatStr{a} -- the (!!) operator is reduntant
 
 --}
 
--- !! T
+!! λ0
