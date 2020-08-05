@@ -1,3 +1,8 @@
+-- bruc: The BruSKI Compiler
+-- Maintainer: Nicklas Botö
+-- Contact: nicklasbotö.se
+-- Latest Revision: 5 August 2020
+
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -5,29 +10,43 @@
 
 module Main where
 
+---- src Import
 import Lib
-import Generator
+import Paths_BruSKI (version)
+
+---- Unlambda Language Import
 import Unlambda.AST (Eλ)
 import Unlambda.Run (run)
+
+---- Language Import
 import AST
-import Encoding
 import Parser
+import Config
+import Encoding
+import Generator
+import qualified Sexy
+-- import MacroHandler
+
+---- Parsing and CLI Import
 import Turtle
-import Paths_BruSKI (version)
-import Data.Version (showVersion)
-import System.Console.Repline
+import System.IO
+import System.Directory
+
+---- REPL Import
 import Control.Monad
 import Data.Functor (($>))
 import Control.Monad.State
+import System.Console.Repline
+import System.Console.Haskeline.MonadException
+
+---- Format Import
 import Data.List
 import Data.Char
-import Config
--- import MacroHandler
-import System.IO
-import Text.Parsec.Error (ParseError)
-import System.Directory
-import System.Console.Haskeline.MonadException
-import qualified Sexy
+
+---- Misc Import
+import Data.Version (showVersion)
+
+
 
 -- main parser
 mainSubroutine :: IO ()
@@ -125,50 +144,54 @@ lee = echo "Lee Jun-fan (Chinese: 李振藩; November 27, 1940 – July 20, 1973
 parseLee :: Parser (IO ())
 parseLee = subcommand "lee" "Facts about Bruce Lee" (pure lee)
 
--- REP loop for interactive
+--------------------------------------------------------------
+-- REPL PARSER AND RUNNER
+--------------------------------------------------------------
 
-{-
-eval :: String -> InputT IO ()
-eval input = outputStr $ case parseString input of
-               [Assign v e a] -> show e ++ "\n"
-               [Express    b] -> ""
-               [Import     f] -> "--- import successful\n"
-               []             -> ""
-               _              -> "--- too many lines\n"
+-- eval :: String -> InputT IO ()
+-- eval input = outputStr $ case parseString input of
+--                [Assign v e a] -> show e ++ "\n"
+--                [Express    b] -> ""
+--                [Import     f] -> "--- import successful\n"
+--                []             -> ""
+--                _              -> "--- too many lines\n"
+-- 
+-- repl :: IO ()
+-- repl = runInputT defaultSettings (loop [])
+--    where 
+--        loop :: [String] -> InputT IO ()
+--        loop env = do
+--            minput <- getInputLine "λ> "
+--            case minput of
+--                Nothing            ->  return ()
+--                Just ":quit"       ->  return ()
+--                Just ":help"       ->  outputStrLn helpList *> loop env
+--                Just ":import"     ->  outputStrLn "--- import successful" *> loop env
+-- --               Just m@('{':'+':s) -> (outputStrLn . show . parseMacro $ m)*> loop env
+--                Just (':':s)       ->  outputStrLn ("--- unkown command: " ++ s) *> loop env
+--                Just input         ->  catch (eval input)
+--                                       (\e -> outputStrLn (show (e :: SomeException))) 
+--                                       *> loop []
 
-repl :: IO ()
-repl = runInputT defaultSettings (loop [])
-   where 
-       loop :: [String] -> InputT IO ()
-       loop env = do
-           minput <- getInputLine "λ> "
-           case minput of
-               Nothing            ->  return ()
-               Just ":quit"       ->  return ()
-               Just ":help"       ->  outputStrLn helpList *> loop env
-               Just ":import"     ->  outputStrLn "--- import successful" *> loop env
---               Just m@('{':'+':s) -> (outputStrLn . show . parseMacro $ m)*> loop env
-               Just (':':s)       ->  outputStrLn ("--- unkown command: " ++ s) *> loop env
-               Just input         ->  catch (eval input)
-                                      (\e -> outputStrLn (show (e :: SomeException))) 
-                                      *> loop []
-
-
--- dont @ me, i know this is a stupid solution
-helpList :: String -}
-helpList = "Available commands:\n:quit, quits the repl\n:import, shorthand for '{! import file !}' in BruSKI"
- 
+-- Main type synonyms for the REPL
+-- RState is bound to change when macros are added
 type RState = Sequence
 type Repl a = HaskelineT (StateT RState IO) a
 
+-- Needed to run in Haskeline monad
 instance MonadException (StateT RState IO) where
     controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
                     run' = RunIO (fmap (StateT . const) . run . flip runStateT s)
                     in (`runStateT` s) <$> f run'
 
+-- like putStrLn, but lifted for transformer use
+-- because I used the so often
 printr :: MonadIO m => String -> m ()
 printr = liftIO . putStrLn
 
+-- Funny name, yes...
+-- Removes a assignment statement of a given name
+-- from the current environment.
 removeAss :: String -> Sequence -> Sequence
 removeAss _ [] = []
 removeAss n (Assign s e a : ss)
@@ -176,6 +199,8 @@ removeAss n (Assign s e a : ss)
   | otherwise = Assign s e a : removeAss n ss
 removeAss n (e : ss) = e     : removeAss n ss
 
+-- Returns a assignment statement of a given name
+-- from the current environment.
 getAss :: String -> Sequence -> Maybe Stmt
 getAss n [] = Nothing
 getAss n (Assign s e a : ss)
@@ -183,14 +208,18 @@ getAss n (Assign s e a : ss)
   | otherwise = getAss n ss
 getAss n (e : ss) = getAss n ss
 
+-- Same as getAss but extracts the expression
 getBλ :: String -> Sequence -> Maybe Bλ
 getBλ n ss = case getAss n ss of
-                Just (Assign n2 e _) -> Just e
+                Just (Assign _ e _) -> Just e
                 _                    -> Nothing
 
-prependTable s@[Assign n _ _] = state $ \ss -> ((), removeAss n ss ++ s)
-prependTable s = state $ \ss -> ((), ss ++ s) 
+-- Appends values to the state table
+appendTable s@[Assign n _ _] = state $ \ss -> ((), removeAss n ss ++ s)
+appendTable s = state $ \ss -> ((), ss ++ s) 
 
+-- Calls the code generator and outputs the results
+-- after running them through the Unlambda interpreter
 runWithCurrent :: Sequence -> StateT RState IO ()
 runWithCurrent exp = do
         curr <- get
@@ -198,20 +227,31 @@ runWithCurrent exp = do
         var  <- liftIO $ run prog
         printr . show $ var
 
+-- Evaluates the given REPL inputs
+-- Parses and appends statements in the case of assignments.
+-- Parses and passes the current environment to the code generator,
+-- in the case of expressions.
+-- Also handles imports, which might not be needed here later...
 eval :: String -> Repl ()
 eval input = case parseString input of
-               as@[Assign {}] -> prependTable as
+               as@[Assign {}] -> appendTable as
                ex@[Express _] -> lift (runWithCurrent ex)
-               im@[Import  f] -> prependTable im
+               im@[Import  f] -> appendTable im
                []             -> return ()
-               l              -> lift (runWithCurrent $ foldl1 App l)
+               _              -> printr "--- too many lines\n"
 
-ini :: Repl ()
+-- The first and last things 
+-- that are presented to the user
+-- when you start/end the REPL
+ini, fin :: Repl ()
 ini = liftIO Sexy.welcome
-
-fin :: Repl ()
 fin = printr "Leaving bruci."
 
+
+-- These are all the commands that are available in the REPL
+
+-- Here are the help text for the commands
+-- if you wish to add a command yourself, please add a help text for it here
 helpCmd [] = printr $ "Available commands:\n" ++ intercalate "\n" [fst x | x <- ops] ++ "\n\nFor info on a specific command, type :help COMMAND (or :? COMMAND)"
 helpCmd ["help"  ] = printr "Usage: help [COMMAND]\nshow available commands, or info about certain commands"
 helpCmd ["?"     ] = printr "Usage: ? [COMMAND]\nshow available commands, or info about certain commands"
@@ -222,40 +262,78 @@ helpCmd ["env"   ] = printr "Usage: env\nshows the current environment"
 helpCmd ["clear" ] = printr "Usage: clear\nclear the current environment"
 helpCmd ["delete"] = printr "Usage: delete VARNAME\ndeletes a statement from the environment"
 helpCmd ["info"  ] = printr "Usage: info VARNAME\nshow the definition of VARNAME"
-helpCmd ["int"   ] = printr "Usage: int VARNAME\nshow the value of VARNAME, as an int"
-helpCmd ["chr"   ] = printr "Usage: chr VARNAME\nshow the value of VARNAME, as a char"
+helpCmd ["int"   ] = printr "Usage: int VARNAME\nshow the value of VARNAME, as an int\nNOTE: This is WIP"
+helpCmd ["chr"   ] = printr "Usage: chr VARNAME\nshow the value of VARNAME, as a char\nNOTE: This is WIP"
 helpCmd ["sexy"  ] = printr "Usage: sexy\ndisplays the terminal greeting"
 helpCmd [x       ] = printr $ "No such command :" ++ x
 helpCmd  _         = printr "--- invalid arguments"
 
-quitCmd    _   = abort
+-- Quits the REPL
+quitCmd :: [String] -> Repl ()
+quitCmd    _   = fin *> abort
+
+-- Shorthand for the import language definition
+-- It might be better to actually import all the 
+-- function from the wanted library here...
+-- And then append them to the state table
+importCmd :: [String] -> Repl () 
 importCmd [f] = eval $ "{! import " ++ f ++ "!}"
 importCmd  _  = printr "--- one import at a time, please"
+
+-- Also a shorthand for a language definition
+formatCmd :: [String] -> Repl ()
 formatCmd  λ  = eval $ "{! format " ++ concat λ ++ "!}"
+
+-- Shows the current environment
+envCmd :: [String] -> Repl ()
 envCmd     _  = get >>= printr . show
+
+-- Cleares the current environment
+clearCmd :: [String] -> Repl ()
 clearCmd   _  = state $ const ((),[])
+
+-- Deletes a statement from the environment
+deleteCmd :: [String] -> Repl ()
 deleteCmd [n] = state $ \ss -> ((), removeAss n ss)  
 deleteCmd  _  = printr "--- one delete at a time, damn..."
+
+-- Shows info about a given statement
+infoCmd :: [String] -> Repl ()
 infoCmd   [n] = do
         curr <- get
         case getBλ n curr of
           Just e  -> (printr . show) e
           Nothing -> printr $ "--- no function named " ++ n
 infoCmd    _  = printr "--- Invalid arguments"
+
+-- Decodes a Bλ statement into an int.
+-- This is very buggy though....
+-- Statements should be β-reduced before being
+-- decoded like this.
+intCmd :: [String] -> Repl ()
 intCmd    [n] = do 
         curr <- get
         case getBλ n curr of
           Just s  -> (printr . show . decode) s
           Nothing -> printr $ "--- no function named " ++ n
 intCmd     _  = printr "--- invalid arguments"
+
+-- Same as the int command, but for chars.
+-- Also buggy, in the same way.
+chrCmd :: [String] -> Repl ()
 chrCmd    [n] = do
         curr <- get
         case getBλ n curr of
           Just s  -> (printr . show . chr . decode) s
           Nothing -> printr $ "--- no function named " ++ n
 chrCmd     _  = printr "--- invalid arguments"
+
+-- B)
+-- print a nice terminal greeting
+sexyCmd :: [String] -> Repl ()
 sexyCmd    _  = liftIO Sexy.welcome
 
+-- Collects the available REPL commands
 ops :: [(String, [String] -> Repl ())]
 ops = [ ("help"  , helpCmd  )
       , ("?"     , helpCmd  )
@@ -271,16 +349,23 @@ ops = [ ("help"  , helpCmd  )
       , ("sexy"  , sexyCmd  )
       ]
 
+-- Stateful word completion
+-- Adds all the function names in the current environment
+-- to the completion list.
 compl :: (Monad m, MonadState RState m) => WordCompleter m
 compl n = do
   ss <- get
   return $ filter (isPrefixOf n) [n | (Assign n _ _ ) <- ss]
 
+-- Main REPL runner
+-- FIXME should handle errors better.
+-- SomeException is not good...
 repl :: IO ()
 repl = flip evalStateT [] $ 
         evalRepl (pure "λ> ") eval' ops (Just ':') (Word compl) ini
           where eval' input  = catch (eval input) (\e -> printr (show (e :: SomeException)))
 
+-- Parses the 'repl' command
 replParser :: Parser (IO ())
 replParser = subcommand "repl" "Interactive BruSKI prompt" (pure repl)
 
@@ -297,7 +382,7 @@ parser =  parseMain
 --    <|> parseLee
 
 desc :: Description
-desc = "\n                                bruc\n                         BruSKI -> Unlambda\n                       Version 0.4 - June 2020\n                           by Nicklas Botö"
+desc = "\n                                bruc\n                         BruSKI -> Unlambda\n                       Version 0.9 - August 2020\n                           by Nicklas Botö"
 
 main :: IO ()
 main = join (Turtle.options desc parser)
