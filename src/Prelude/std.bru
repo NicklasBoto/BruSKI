@@ -53,3 +53,20 @@ formatChrLst := λ (get{0, chrlst} λ0) :: 1
 
 -- nice
 formatUnl := λ (0 I)
+
+-- formats a length 3 list
+fget     := λ (2 (get 0 1)) 
+formatV3 := λλ (UNL{.[} UNL{.,} fget{n0} UNL{.,} fget{n1} UNL{.]} fget{n2})
+
+--!-- ease of use functions
+
+-- makes unfinished functions easing to read
+-- div := undefined
+-- running this will make the program crash
+undefined := UNL{UNDEFINED} :: 0
+
+-- makes some nested ternary operators
+-- (if statements) prettier
+-- Or am I bullshitting
+-- TODO look over this
+otherwise := T

@@ -6,8 +6,8 @@
 succ := λλλ (1 (2 1 0)) :: 1
 
 -- the pred functions, --
-predF   := λ (pair (snd 0) (succ (snd 0)))
-predPc0 := (pair (λλ0) (λλ0)) :: 1
+predF   := λ <(snd 0), (succ (snd 0))>
+predPc0 := <λλ0, λλ0> :: 1
 pred    := λ (fst (0 predF predPc0))
 
 -- basic arithmetic functions
@@ -17,9 +17,9 @@ exp  := λλ  (0 1)
 sub  := λλ  (0 pred 1)
 
 -- FIXME
--- divide  := λλλλλ ((λ (λ (0 (λ (λλ0)) (λλ1))) 0 ((λλ0) 2 1) (2 (5 0 3 2 1))) (sub 4 3)) :: 2
--- divide1 := Y{ divide }
--- div     := λλ (divide1 (succ 1) 0)
+divide  := λλλλλ ((λ (λ (0 (λ (λλ0)) (λλ1))) 0 ((λλ0) 2 1) (2 (5 0 3 2 1))) (sub 4 3)) :: 2
+divide1 := Y{ divide }
+div     := λλ (divide1 (succ 1) 0)
 
 -- some numbers
 zero  := λλ0 :: 0
@@ -34,7 +34,7 @@ eight := succ{seven}
 nine  := succ{eight}
 ten   := succ{nine }
 
-exp2  := λ exp{two, 0}  
+exp2  := exp{two} :: 1 
 n16   := exp2{four }
 n32   := exp2{five }
 n64   := exp2{six  }
@@ -46,6 +46,7 @@ n1024 := exp2{ten  }
 -- synonyms
 ++  := succ :: 1
 +   := add  :: 2
+-   := sub  :: 2
 *   := mul  :: 2
 ^   := exp  :: 2
 n0  := zero
