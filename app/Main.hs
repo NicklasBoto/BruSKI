@@ -1,7 +1,7 @@
--- bruc: The BruSKI Compiler
--- Maintainer: Nicklas Botö
--- Contact: nicklasbotö.se
--- Latest Revision: 5 August 2020
+-- bruc, The BruSKI Compiler
+-- Maintainer:      Nicklas Botö
+-- Contact:         nicklasbotö.se
+-- Latest Revision: 16 August 2020
 
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleContexts  #-}
@@ -24,6 +24,7 @@ import Parser
 import Config
 import Encoding
 import Generator
+import Translator
 import qualified Sexy
 -- import MacroHandler
 
@@ -224,8 +225,32 @@ runWithCurrent :: Sequence -> StateT RState IO ()
 runWithCurrent exp = do
         curr <- get
         prog <- liftIO $ evalStateT (generateTable (curr ++ exp)) []
-        var  <- liftIO $ run prog
+        var  <- liftIO $ run prog 
         printr . show $ var
+
+genWithCurrent :: Sequence -> StateT RState IO ()
+genWithCurrent exp = do
+        curr <- get
+        prog <- liftIO $ evalStateT (generateTable (curr ++ exp)) []
+        printr . show $ prog
+
+tableFromFile :: String -> StateT RState IO ()
+tableFromFile f = do
+        handle   <- liftIO $ openFile (preludePath ++ f ++ ".bru") ReadMode
+        contents <- liftIO $ hGetContents handle
+        printr contents
+
+addToTable :: Sequence -> Repl ()
+addToTable (Import     f : rs) = do
+        lib <- liftIO $ parseFile (Config.preludePath ++ f ++ ".bru")
+        addToTable lib *> addToTable rs
+addToTable (Assign n λ a : rs) = do
+        curr <- get
+        let reduced = expandExpression λ (toST curr)
+        appendTable [Assign n reduced a] *> addToTable rs
+                where toST (Assign n λ a : ss) = (n, (λ,fromInteger a)) : toST ss
+                      toST (           _ : ss) = toST ss
+addToTable [] = return ()
 
 -- Evaluates the given REPL inputs
 -- Parses and appends statements in the case of assignments.
@@ -234,11 +259,15 @@ runWithCurrent exp = do
 -- Also handles imports, which might not be needed here later...
 eval :: String -> Repl ()
 eval input = case parseString input of
-               as@[Assign {}] -> appendTable as
+               as@[Assign {}] -> addToTable as
                ex@[Express _] -> lift (runWithCurrent ex)
-               im@[Import  f] -> appendTable im
+               im@[Import  f] -> addToTable im
                []             -> return ()
-               _              -> printr "--- too many lines\n"
+               _              -> printr "--- the parser is confused\n(??)"
+
+mapλ :: Stmt -> (Bλ -> Bλ) -> Stmt
+mapλ (Assign n λ a) f = Assign n (f λ) a
+mapλ             x  _ = x
 
 -- The first and last things 
 -- that are presented to the user
@@ -265,6 +294,8 @@ helpCmd ["info"  ] = printr "Usage: info VARNAME\nshow the definition of VARNAME
 helpCmd ["int"   ] = printr "Usage: int VARNAME\nshow the value of VARNAME, as an int\nNOTE: This is WIP"
 helpCmd ["chr"   ] = printr "Usage: chr VARNAME\nshow the value of VARNAME, as a char\nNOTE: This is WIP"
 helpCmd ["sexy"  ] = printr "Usage: sexy\ndisplays the terminal greeting"
+helpCmd ["gen"   ] = printr "Usage: gen VARNAME\ngenerate the Unlambda code of a certain function"
+helpCmd ["browse"] = printr "Usage: browse FILENAME\nsee the contents of a prelude library"
 helpCmd [x       ] = printr $ "No such command :" ++ x
 helpCmd  _         = printr "--- invalid arguments"
 
@@ -286,7 +317,8 @@ formatCmd  λ  = eval $ "{! format " ++ concat λ ++ "!}"
 
 -- Shows the current environment
 envCmd :: [String] -> Repl ()
-envCmd     _  = get >>= printr . show
+envCmd ["church"] = importCmd ["church"] *> formatCmd ["formatChurch"]
+envCmd     _      = get >>= printr . show
 
 -- Cleares the current environment
 clearCmd :: [String] -> Repl ()
@@ -333,6 +365,15 @@ chrCmd     _  = printr "--- invalid arguments"
 sexyCmd :: [String] -> Repl ()
 sexyCmd    _  = liftIO Sexy.welcome
 
+genCmd :: [String] -> Repl ()
+genCmd [f] = lift $ genWithCurrent (parseString f)
+genCmd  _  = printr "--- invalid arguments"
+
+-- shows the function in some library
+browseCmd :: [String] -> Repl ()
+browseCmd [l] = lift $ tableFromFile l
+browseCmd  _  = printr "--- invalid arguments"
+
 -- Collects the available REPL commands
 ops :: [(String, [String] -> Repl ())]
 ops = [ ("help"  , helpCmd  )
@@ -347,6 +388,8 @@ ops = [ ("help"  , helpCmd  )
       , ("int"   , intCmd   )
       , ("chr"   , chrCmd   )
       , ("sexy"  , sexyCmd  )
+      , ("gen"   , genCmd   )
+      , ("browse", browseCmd)
       ]
 
 -- Stateful word completion
@@ -386,4 +429,3 @@ desc = "\n                                bruc\n                         BruSKI 
 
 main :: IO ()
 main = join (Turtle.options desc parser)
-
