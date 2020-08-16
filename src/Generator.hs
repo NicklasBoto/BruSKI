@@ -6,6 +6,7 @@ module Generator
         , genFile
         , runFile
         , generateTable
+        , expandExpression
         ) where
 
 ---- Language Import
@@ -26,6 +27,7 @@ import Translator
 import Control.Monad.State
 import Control.Monad
 
+
 getFunction :: String -> SymbolTable -> (Bλ, Int)
 getFunction name table = case lookup name table of
     Just s  -> s
@@ -42,7 +44,7 @@ expandExpression λ table = eE λ where
     eE (Idx           n)  = Idx n
     eE (Unl           s)  = Unl s
     eE (Abs           λ)  = Abs (eE λ)
-    eE (App         l r)  = App (eE l) (eE r)
+    eE (App         l r)  = reduceToNormal $ App (eE l) (eE r)
     eE (Fun   name args)  = let  (function, arity) = getFunction name table in 
                             if   length args > arity
                             then error $ "Generator Error\ntoo many arguments, arity is " ++ show arity
@@ -59,6 +61,7 @@ generateTable [Express λ] = do
     let formatλ = case lookup "__FORMATTER__" table of
                         Just (f,_) -> App f λ
                         Nothing    -> λ
+
     return $ generate (expandExpression formatλ table)
 
 generateTable ((Assign name λ a):ss) = do
@@ -86,3 +89,4 @@ runFile f = do
     Unlambda.run prog
 
 -- TODO possibly fix muplite Express statements
+-- FIXME or not, nah

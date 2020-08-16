@@ -5,6 +5,8 @@ module Translator
         , generate
         , compile
         , toUnl
+        , reduceToNormal
+        , betaReduce
         ) where
 
 {-
@@ -48,7 +50,7 @@ fromIλ (Unl1 s)   = parseLazy s
 -- Lists the indeces with their "bindedness".
 -- More on this at the VarType definition.
 inScope :: Iλ -> [VarType]
-inScope x = iS 0 x where
+inScope = iS 0 where
     iS v (Idx1 n)   = [if n <= v-1 then if v-n-1 == 0 then Head else Bound else Free]
     iS v (App1 l r) = iS v l ++ iS v r
     iS v (Abs1 λ)   = iS (v+1) λ
@@ -58,6 +60,40 @@ inScope x = iS 0 x where
 headFree, headBound :: Iλ -> Bool
 headFree  = not . headBound
 headBound = elem Head . inScope
+
+---- β-reducer
+replaceHead :: Bλ -> Bλ -> Bλ
+replaceHead (Abs func) val = rH 1 func where
+    rH v (Idx   n)
+      | v - n == 1 = incIndex val v
+      | n <= v-1   = Idx n
+      | otherwise  = Idx (n-1)
+    rH v (App l r) = App (rH v l) (rH v r)
+    rH v (Abs   λ) = Abs $ rH (v+1) λ
+    rH v (Unl   s) = Unl s 
+
+reduceToNormal :: Bλ -> Bλ
+reduceToNormal = until isNormal betaReduce
+
+betaReduce :: Bλ -> Bλ
+betaReduce (Idx         n) = Idx n
+betaReduce (Unl         s) = Unl s
+betaReduce (Abs         λ) = Abs $ betaReduce λ
+betaReduce (App      m  n) = case betaReduce m of
+                               Idx   x -> App (Idx x) (betaReduce n)
+                               Abs   λ -> replaceHead (Abs λ) n
+                               App l r -> App (App l r) (betaReduce n)
+                               Unl   s -> App (Unl s) n
+
+isNormal :: Bλ -> Bool
+isNormal λ = λ == betaReduce λ
+
+incIndex :: Bλ -> Integer -> Bλ
+incIndex λ x = iI 0 λ where
+    iI v (Idx   n) = Idx $ if n <= v-1 then n else n + x - 1
+    iI v (App l r) = App (iI v l) (iI v r)
+    iI v (Abs   λ) = Abs (iI (v+1) λ)
+    iI v        x  = x
 
 -- Decrements all the free indeces in DeBruijn-expressions.
 -- This function is really only necessary when translating from DeBruijn.
@@ -70,7 +106,7 @@ headBound = elem Head . inScope
 -- T[λ(S I T[λ1])] => T[λ(S I (K T[0]))]
 -- That is, indeces need to keep their bindedness.
 decIndex :: Iλ -> Iλ
-decIndex x = dI 0 x where
+decIndex = dI 0 where
     dI v (Idx1 n)   = Idx1 $ if n <= v-1 then n else n-1
     dI v (App1 l r) = App1 (dI v l) (dI v r)
     dI v (Abs1 λ)   = Abs1 (dI (v+1) λ)
@@ -138,3 +174,4 @@ compile = toUnl . translate . toIλ . parseExpression
 
 generate :: Bλ -> String
 generate = toUnl . translate . toIλ
+
