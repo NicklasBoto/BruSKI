@@ -46,6 +46,15 @@ return $ Fun "add" (map (encode toInt) [l, r])
 
 I'm not sure whether the macro body should be defined in Haskell (with code injection), or BruSKI.
 
+Also...
+You should be able to choose how to delimiterize your macro arguments
+
+```
+{+ #include "$f" ; {! import $f !} +}
+-- which would generate the macro for
+#include "church"
+```
+
 ## Alpha naming abstractions
 Hey, I like DeBruijn as much as the next guy, but... naming variables __can__ be a good idea.
 At least as comments after the lambdas. Kinda like how you can comment:
