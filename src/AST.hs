@@ -9,6 +9,7 @@ module AST
 
 ---- Format Import
 import Data.List
+import Data.Maybe
 
 -- Stores BruSKI epxressions
 data Stmt = Assign String Bλ Integer 
@@ -54,12 +55,25 @@ instance {-# OVERLAPPING #-} Show SymbolTable where
         show = intercalate "\n" . map show
 
 instance Show Bλ where
-        show (Idx x)            = show x
-        show (Abs s)            = "λ" ++ show s
-        show (App l r)          = "(" ++ show l ++ "<-" ++ show r ++ ")"
-        show (Unl s)            = "{" ++ s ++ "}"
-        show (Fun s a)          = show s ++ show a
+        show (Idx   x) = show x
+        show (Abs   s) = case decode (Abs s) of
+                           -- Because INT{0} is λλ0 which is used
+                           -- all the time, also 1 why not.
+                           Just i  -> if i < 2 then "λ" ++ show s
+                                      else "INT{" ++ show i ++ "}"
+                           Nothing -> "λ" ++ show s
+        show (App l r) = "(" ++ show l ++ "<-" ++ show r ++ ")"
+        show (Unl   s) = "{" ++ s ++ "}"
+        show (Fun s a) = show s ++ show a
 
 toChar :: Integer -> Char
 toChar = toEnum . fromInteger
 
+-- Makes showing the environment MUCH better
+-- not cluttered with numerals
+decode :: Bλ -> Maybe Int
+decode (Abs (Abs    (Idx 0))) = Just 0
+decode (App (Idx 1) (Idx 0))  = Just 1
+decode (Abs              λ)   = decode λ
+decode (App (Idx 1)      r )  = fmap (+1) (decode r)
+decode                   _    = Nothing

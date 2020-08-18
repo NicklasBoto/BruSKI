@@ -179,6 +179,8 @@ chrL = do
         let encC = map (encode ord) chrs
         return $ toList encC
 
+-- FIXME also parses weird..
+-- That is, not at all
 listIndex :: Parser Bλ
 listIndex = do
         name <- identifier

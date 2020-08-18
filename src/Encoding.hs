@@ -13,6 +13,9 @@ module Encoding
 ---- Format Import
 import Data.List
 
+---- Handling Import
+import Data.Maybe
+
 ---- Language Import
 import AST
 
@@ -28,11 +31,12 @@ toList = foldr cons nil
 encode :: (a -> Int) -> a -> Bλ
 encode f c = Abs . Abs $ iterate (App (Idx 1)) (Idx 0) !! f c
 
-decode :: Bλ -> Int
-decode (Abs         λ) = decode λ
-decode (App (Idx 1) r) = 1 + decode r
-decode (Idx         0) = 0
-decode              _  = error "Not an int..."
+decode :: Bλ -> Maybe Int
+decode (Abs (Abs    (Idx 0))) = Just 0
+decode (App (Idx 1) (Idx 0))  = Just 1
+decode (Abs              λ)   = decode λ
+decode (App (Idx 1)      r )  = fmap (+1) (decode r)
+decode                   _    = Nothing
 
 countLambda :: Bλ -> Integer
 countLambda (App l r) = countLambda l + countLambda r

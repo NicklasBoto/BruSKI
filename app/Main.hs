@@ -250,6 +250,7 @@ addToTable (Assign n λ a : rs) = do
         appendTable [Assign n reduced a] *> addToTable rs
                 where toST (Assign n λ a : ss) = (n, (λ,fromInteger a)) : toST ss
                       toST (           _ : ss) = toST ss
+                      toST                 []  = []
 addToTable [] = return ()
 
 -- Evaluates the given REPL inputs
@@ -296,6 +297,7 @@ helpCmd ["chr"   ] = printr "Usage: chr VARNAME\nshow the value of VARNAME, as a
 helpCmd ["sexy"  ] = printr "Usage: sexy\ndisplays the terminal greeting"
 helpCmd ["gen"   ] = printr "Usage: gen VARNAME\ngenerate the Unlambda code of a certain function"
 helpCmd ["browse"] = printr "Usage: browse FILENAME\nsee the contents of a prelude library"
+helpCmd ["libs"  ] = printr "Usage: libs [FILENAME]\ninformation on a specific prelude library\npassing no arguments lists all prelude libraries"
 helpCmd [x       ] = printr $ "No such command :" ++ x
 helpCmd  _         = printr "--- invalid arguments"
 
@@ -346,7 +348,9 @@ intCmd :: [String] -> Repl ()
 intCmd    [n] = do 
         curr <- get
         case getBλ n curr of
-          Just s  -> (printr . show . decode) s
+          Just s  -> case decode s of
+                       Just i  -> (printr . show) i
+                       Nothing -> printr "--- not an int"
           Nothing -> printr $ "--- no function named " ++ n
 intCmd     _  = printr "--- invalid arguments"
 
@@ -356,7 +360,9 @@ chrCmd :: [String] -> Repl ()
 chrCmd    [n] = do
         curr <- get
         case getBλ n curr of
-          Just s  -> (printr . show . chr . decode) s
+          Just s  -> case decode s of 
+                       Just c  -> (printr . show . chr) c
+                       Nothing -> printr "--- not a char"
           Nothing -> printr $ "--- no function named " ++ n
 chrCmd     _  = printr "--- invalid arguments"
 
@@ -374,6 +380,21 @@ browseCmd :: [String] -> Repl ()
 browseCmd [l] = lift $ tableFromFile l
 browseCmd  _  = printr "--- invalid arguments"
 
+getLibs :: StateT RState IO ()
+getLibs = do
+        files <- liftIO $ listDirectory Config.preludePath
+        let libs = intercalate "\n" $ map (takeWhile (/='.')) files 
+        printr libs
+
+libsCmd :: [String] -> Repl ()
+libsCmd [        ] = printr "Available libraries:" *> lift getLibs
+libsCmd ["comb"  ] = printr "common combinators and fixed points"
+libsCmd ["list"  ] = printr "functions for creating and operating on lists\nthis is needed when using all syntactic sugar related to lists"
+libsCmd ["church"] = printr "defines church numerals and arithmetic operators"
+libsCmd ["std"   ] = printr "standard library, contains all other libraries and more"
+libsCmd ["bool"  ] = printr "defines booleans and boolean operators"
+libsCmd [l       ] = printr $ "--- no such library" ++ l
+
 -- Collects the available REPL commands
 ops :: [(String, [String] -> Repl ())]
 ops = [ ("help"  , helpCmd  )
@@ -390,6 +411,7 @@ ops = [ ("help"  , helpCmd  )
       , ("sexy"  , sexyCmd  )
       , ("gen"   , genCmd   )
       , ("browse", browseCmd)
+      , ("libs"  , libsCmd  )
       ]
 
 -- Stateful word completion
