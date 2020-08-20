@@ -20,6 +20,9 @@ hi def link bruFormat Define
 hi def link bruMacros Preproc
 hi def link bruLangdef Special
 
+syn keyword bruDeffuncs undefined error
+hi def link bruDeffuncs Function
+
 syn match bruAbs /λ\+/
 hi def link bruAbs Special
 
