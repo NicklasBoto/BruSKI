@@ -117,6 +117,7 @@ getE 'k' = K
 getE 'i' = I
 getE 'r' = R
 getE 'v' = V
+getE 'e' = I
 getE  c  = error $ "\nParse Error in \"getE\":\nexpecting \"s\", \"k\", \"i\", or \"r\"\ngot " ++ [c]
 
 getA :: Char -> Aλ
