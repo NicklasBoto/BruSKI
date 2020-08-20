@@ -3,7 +3,7 @@
 {! import list !}
 
 -- the successor function, ++
-succ := λλλ (1 (2 1 0)) :: 1
+succ, ++ := λλλ (1 (2 1 0)) :: 1
 
 -- the pred functions, --
 predF   := λ <(snd 0), (succ (snd 0))>
@@ -11,10 +11,10 @@ predPc0 := <λλ0, λλ0> :: 1
 pred    := λ (fst (0 predF predPc0))
 
 -- basic arithmetic functions
-add  := λλ  (0 succ 1)
-mul  := λλλ (2 (1 0)) :: 2
-exp  := λλ  (0 1)
-sub  := λλ  (0 pred 1)
+add, +  := λλ  (0 succ 1)
+mul, *  := λλλ (2 (1 0)) :: 2
+exp, ^  := λλ  (0 1)
+sub, -  := λλ  (0 pred 1)
 
 -- FIXME
 -- Y := λ (λ(1 (0 0)) λ(1 (0 0))) :: 1
@@ -23,17 +23,17 @@ sub  := λλ  (0 pred 1)
 -- div     := λλ (divide1 (succ 1) 0)
 
 -- some numbers
-zero  := λλ0 :: 0
-one   := succ{zero }
-two   := succ{one  }
-three := succ{two  }
-four  := succ{three}
-five  := succ{four }
-six   := succ{five }
-seven := succ{six  }
-eight := succ{seven}
-nine  := succ{eight}
-ten   := succ{nine }
+zero , n0  := λλ0 :: 0
+one  , n1  := succ{zero }
+two  , n2  := succ{one  }
+three, n3  := succ{two  }
+four , n4  := succ{three}
+five , n5  := succ{four }
+six  , n6  := succ{five }
+seven, n7  := succ{six  }
+eight, n8  := succ{seven}
+nine , n9  := succ{eight}
+ten  , n10 := succ{nine }
 
 exp2  := exp{two} :: 1 
 n16   := exp2{four }
@@ -43,24 +43,6 @@ n128  := exp2{seven}
 n256  := exp2{eight}
 n512  := exp2{nine }
 n1024 := exp2{ten  }
-
--- synonyms
-++  := succ :: 1
-+   := add  :: 2
--   := sub  :: 2
-*   := mul  :: 2
-^   := exp  :: 2
-n0  := zero
-n1  := one
-n2  := two
-n3  := three
-n4  := four
-n5  := five
-n6  := six
-n7  := seven
-n8  := eight
-n9  := nine
-n10 := ten
 
 -- formatting function
 -- prints the church encoded numeral as stars
