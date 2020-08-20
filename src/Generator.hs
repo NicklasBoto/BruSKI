@@ -41,14 +41,16 @@ partialApply arity unl = take (fromInteger arity + 1) (iterate ('`':) unl)
 
 expandExpression :: Bλ -> SymbolTable -> Bλ
 expandExpression λ table = eE λ where
-    eE (Idx           n)  = Idx n
-    eE (Unl           s)  = Unl s
-    eE (Abs           λ)  = Abs (eE λ)
-    eE (App         l r)  = reduceToNormal $ App (eE l) (eE r)
-    eE (Fun   name args)  = let  (function, arity) = getFunction name table in 
-                            if   length args > arity
-                            then error $ "Generator Error\ntoo many arguments, arity is " ++ show arity
-                            else eE $ foldl App function args
+    eE (Idx             n)  = Idx n
+    eE (Unl             s)  = Unl s
+    eE (Abs             λ)  = Abs (eE λ)
+    eE (App         e l r)  = if   e 
+                              then reduceToNormal $ App e (eE l) (eE r)
+                              else                  App e (eE l) (eE r)
+    eE (Fun     name args)  = let  (function, arity) = getFunction name table in 
+                              if   length args > arity
+                              then error $ "Generator Error\ntoo many arguments, arity is " ++ show arity
+                              else eE $ foldl (App True) function args
 
 generateTable :: Sequence -> StateT SymbolTable IO Unlambda
 generateTable [] = error "Generator Error\nnon-library files must terminate with an evaluation (!!)"
@@ -59,7 +61,7 @@ generateTable ((Import file):ss) = do
 generateTable [Express λ] = do
     table <- get
     let formatλ = case lookup "__FORMATTER__" table of
-                        Just (f,_) -> App f λ
+                        Just (f,_) -> App True f λ
                         Nothing    -> λ
 
     return $ generate (expandExpression formatλ table)

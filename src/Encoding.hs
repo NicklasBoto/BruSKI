@@ -29,19 +29,19 @@ toList = foldr cons nil
               nil  = Fun "nil"  []
 
 encode :: (a -> Int) -> a -> Bλ
-encode f c = Abs . Abs $ iterate (App (Idx 1)) (Idx 0) !! f c
+encode f c = Abs . Abs $ iterate (App True (Idx 1)) (Idx 0) !! f c
 
 decode :: Bλ -> Maybe Int
-decode (Abs (Abs    (Idx 0))) = Just 0
-decode (App (Idx 1) (Idx 0))  = Just 1
-decode (Abs              λ)   = decode λ
-decode (App (Idx 1)      r )  = fmap (+1) (decode r)
-decode                   _    = Nothing
+decode (Abs   (Abs    (Idx 0))) = Just 0
+decode (App _ (Idx 1) (Idx 0))  = Just 1
+decode (Abs                λ)   = decode λ
+decode (App _ (Idx 1)      r)   = fmap (+1) (decode r)
+decode                     _    = Nothing
 
 countLambda :: Bλ -> Integer
-countLambda (App l r) = countLambda l + countLambda r
-countLambda (Abs b)   = 1 + countLambda b
-countLambda _         = 0
+countLambda (App _ l r) = countLambda l + countLambda r
+countLambda (Abs     b) = 1 + countLambda b
+countLambda          _  = 0
 
 toInteg :: String -> Integer
 toInteg = read

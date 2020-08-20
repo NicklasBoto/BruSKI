@@ -38,27 +38,27 @@ whileParser :: Parser Sequence
 whileParser = do
         whiteSpace
         ld <- whileIDSL <|> return [] -- FIXME no mult. IDSLs 
-        s <- manyTill sequentStatement eof
+        s <- concat <$> manyTill sequentStatement eof
         return $ ld ++ s
 
-sequentStatement :: Parser Stmt
+sequentStatement :: Parser [Stmt]
 sequentStatement = wrapSpace statement
 
-statement :: Parser Stmt
+statement :: Parser [Stmt]
 statement =  try assignStmt
-         <|> expressStmt
+         <|> fmap (:[]) expressStmt
 
 expressStmt :: Parser Stmt
 expressStmt = Express <$> expression
 
-assignStmt :: Parser Stmt
+assignStmt :: Parser [Stmt]
 assignStmt = do
-        var <- identifier
+        var <- sepBy identifier comma
         reservedOp ":="
         expr <- expression
         spaces
         arity <- getArity expr <|> countArity expr
-        return $ Assign var expr arity
+        return $ map (\n -> Assign n expr arity) var
 
 countArity :: Bλ -> Parser Integer
 countArity = return . countLambda
@@ -115,6 +115,7 @@ expression :: Parser Bλ
 expression =  idxExpression
 --        <|> try absCommented
           <|> absExpression
+          <|> unevalApp
           <|> parens appExpression
           <|> synSugar
           <|> funcExpression
@@ -135,8 +136,14 @@ absCommented = do
         whiteSpace
         Abs <$> expression
 
+unevalApp :: Parser Bλ
+unevalApp = do
+        char '\''
+        apps <- parens $ sepBy1 expression spaces
+        return $ foldl1 (App False) apps
+
 appExpression :: Parser Bλ
-appExpression = foldl1 App <$> sepBy1 expression spaces
+appExpression = foldl1 (App True) <$> sepBy1 expression spaces
 
 synSugar :: Parser Bλ
 synSugar =  unlP
@@ -153,6 +160,7 @@ chrP = try $ string "CHR" *> (encode ord   <$> braces anyChar)
 listParser :: Parser Bλ
 listParser =  try unlL 
           <|> try intL
+          <|> try prtL
           <|> chrL
           <|> listIndex
           <|> listP
@@ -164,6 +172,13 @@ unlL = do
         unls <- brackets (sepBy (many1 $ noneOf "],") comma)
         let mapU = map Unl unls
         return $ toList mapU
+
+prtL :: Parser Bλ
+prtL = do
+        string "PRT"
+        prts <- brackets (sepBy (many1 $ noneOf "],") comma)
+        let mapP = map toPrint prts
+        return $ toList mapP
 
 intL :: Parser Bλ
 intL = do

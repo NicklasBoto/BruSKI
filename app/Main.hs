@@ -260,7 +260,8 @@ addToTable [] = return ()
 -- Also handles imports, which might not be needed here later...
 eval :: String -> Repl ()
 eval input = case parseString input of
-               as@[Assign {}] -> addToTable as
+               -- FIXME only allow multiple assignment 
+               as@(Assign {} : ass) -> addToTable as
                ex@[Express _] -> lift (runWithCurrent ex)
                im@[Import  f] -> addToTable im
                []             -> return ()
@@ -298,7 +299,7 @@ helpCmd ["sexy"  ] = printr "Usage: sexy\ndisplays the terminal greeting"
 helpCmd ["gen"   ] = printr "Usage: gen VARNAME\ngenerate the Unlambda code of a certain function"
 helpCmd ["browse"] = printr "Usage: browse FILENAME\nsee the contents of a prelude library"
 helpCmd ["libs"  ] = printr "Usage: libs [FILENAME]\ninformation on a specific prelude library\npassing no arguments lists all prelude libraries"
-helpCmd [x       ] = printr $ "No such command :" ++ x
+helpCmd [x       ] = printr $ "--- no such command :" ++ x
 helpCmd  _         = printr "--- invalid arguments"
 
 -- Quits the REPL
@@ -420,7 +421,7 @@ ops = [ ("help"  , helpCmd  )
 compl :: (Monad m, MonadState RState m) => WordCompleter m
 compl n = do
   ss <- get
-  return $ filter (isPrefixOf n) [n | (Assign n _ _ ) <- ss]
+  return $ filter (isPrefixOf n) ([n | (Assign n _ _ ) <- ss] ++ map ((':':).fst) ops)
 
 -- Main REPL runner
 -- FIXME should handle errors better.

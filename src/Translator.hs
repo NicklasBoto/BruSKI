@@ -32,10 +32,10 @@ data VarType = Free | Bound | Head deriving (Show, Eq)
 
 -- Converts from the parsed DeBruijn-expressions to their intermediate forms.
 toIλ :: Bλ -> Iλ
-toIλ (Idx   n) = Idx1 (fromInteger n)
-toIλ (Abs   λ) = Abs1 (toIλ λ)
-toIλ (App l r) = App1 (toIλ l) (toIλ r)
-toIλ (Unl   s) = Unl1 s
+toIλ (Idx     n) = Idx1 (fromInteger n)
+toIλ (Abs     λ) = Abs1 (toIλ λ)
+toIλ (App _ l r) = App1 (toIλ l) (toIλ r)
+toIλ (Unl     s) = Unl1 s
 
 -- Converts intermediate combinators to their SKI forms.
 fromIλ :: Iλ -> Aλ
@@ -68,32 +68,32 @@ replaceHead (Abs func) val = rH 1 func where
       | v - n == 1 = incIndex val v
       | n <= v-1   = Idx n
       | otherwise  = Idx (n-1)
-    rH v (App l r) = App (rH v l) (rH v r)
-    rH v (Abs   λ) = Abs $ rH (v+1) λ
-    rH v (Unl   s) = Unl s 
+    rH v (App e l r) = App e (rH v l) (rH v r)
+    rH v (Abs     λ) = Abs $ rH (v+1) λ
+    rH v (Unl     s) = Unl s 
 
 reduceToNormal :: Bλ -> Bλ
 reduceToNormal = until isNormal betaReduce
 
 betaReduce :: Bλ -> Bλ
-betaReduce (Idx         n) = Idx n
-betaReduce (Unl         s) = Unl s
-betaReduce (Abs         λ) = Abs $ betaReduce λ
-betaReduce (App      m  n) = case betaReduce m of
-                               Idx   x -> App (Idx x) (betaReduce n)
-                               Abs   λ -> replaceHead (Abs λ) n
-                               App l r -> App (App l r) (betaReduce n)
-                               Unl   s -> App (Unl s) n
+betaReduce (Idx          n) = Idx n
+betaReduce (Unl          s) = Unl s
+betaReduce (Abs          λ) = Abs $ betaReduce λ
+betaReduce (App    e  m  n) = case betaReduce m of
+                               Idx     x -> App e (Idx x) (betaReduce n)
+                               Abs     λ -> replaceHead (Abs λ) n
+                               App b l r -> App e (App b l r) (betaReduce n)
+                               Unl     s -> App e (Unl s) n
 
 isNormal :: Bλ -> Bool
 isNormal λ = λ == betaReduce λ
 
 incIndex :: Bλ -> Integer -> Bλ
 incIndex λ x = iI 0 λ where
-    iI v (Idx   n) = Idx $ if n <= v-1 then n else n + x - 1
-    iI v (App l r) = App (iI v l) (iI v r)
-    iI v (Abs   λ) = Abs (iI (v+1) λ)
-    iI v        x  = x
+    iI v (Idx     n) = Idx $ if n <= v-1 then n else n + x - 1
+    iI v (App e l r) = App e (iI v l) (iI v r)
+    iI v (Abs     λ) = Abs (iI (v+1) λ)
+    iI v          x  = x
 
 -- Decrements all the free indeces in DeBruijn-expressions.
 -- This function is really only necessary when translating from DeBruijn.
