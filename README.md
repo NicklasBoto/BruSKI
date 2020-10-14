@@ -13,10 +13,10 @@ First, make sure you have stack installed. You can find it here:
 
 https://docs.haskellstack.org/en/stable/README/#how-to-install
 
-Then install with stack. Note that you have to add `~/.local/bin/` to your path.
+Then run the install script
 
 ```
-$ stack install
+$ ./install.sh
 ```
 
 ## bruc
