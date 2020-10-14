@@ -2,7 +2,7 @@
 
 module Unlambda.AST 
         ( Aλ (A, E)
-        , Eλ (K, Kf, S, Sf, Sff, I, D, R, V)
+        , Eλ (K, Kf, S, Sf, Sff, I, Dot, R, V, Ex, Exf, D, Df)
         ) where
 
 -----------------------------------------------------------------------
@@ -25,9 +25,13 @@ data Eλ = K
         | Sf Eλ
         | Sff Eλ Eλ
         | I
-        | D String
+        | Dot String
         | R
         | V
+        | Ex
+        | Exf Eλ
+        | D
+        | Df Eλ
 
 -----------------------------------------------------------------------
 ----------------------- Instances -------------------------------------
@@ -47,9 +51,13 @@ instance Show Aλ where
                            (Sf a)    -> "sf" ++ show (E a)
                            (Sff a b) -> "sff" ++ show (E a) ++ show (E b)
                            I         -> "i"
-                           (D a)     -> "." ++ a
+                           (Dot a)     -> "." ++ a
                            R         -> "r"
                            V         -> "v"
+                           D         -> "d"
+                           (Df a)    -> "df" ++ show (E a)
+                           Ex        -> "e"
+                           (Exf a)   -> "e" ++ show (E a)
                         -- _         -> "NOT IMPLEMENTED"
 
 instance Show Eλ where
@@ -59,8 +67,12 @@ instance Show Eλ where
         show (Sf a)    = show (Sff a I)
         show (Sff a b) = "<s>" ++ show a ++ show b
         show I         = "<i>"
-        show (D a)     = "." ++ a
+        show (Dot a)   = "." ++ a
         show R         = "\n"
         show V         = "<v>"
+        show D         = "<d>"
+        show (Df a)    = "<d>" ++ show a 
+        show Ex        = "<e>"
+        show (Exf a)   = "<e>" ++ show a 
      -- show _         = "NOT IMPLEMENTED"
 

@@ -16,7 +16,7 @@ import Data.Char
 
 -- Filters away \n, \t, and " "
 format :: String -> String
-format = filter (not . isSpace) . uncomment
+format = uncomment
 
 -- Removes full-line and in-line comments.
 -- Note that Madore's Unlambda does not support inline commenting.

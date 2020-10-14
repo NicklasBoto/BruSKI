@@ -20,10 +20,12 @@ import Unlambda.AST
 -- Evaluates the individual combinators 
 -- using partial application when polyary. 
 collapse :: Eλ -> Eλ -> IO Eλ
-collapse (D a) b     = putStr a    >> return b
+collapse (Dot a) b   = putStr a    >> return b
 collapse R a         = putStr "\n" >> return a
 collapse V a         = return V
 collapse I a         = return a
+collapse (Exf a) b   = error $ "***Exception\n" ++ show a
+collapse Ex a        = return $ Exf a
 collapse (Kf a) b    = return a
 collapse K a         = return $ Kf a
 collapse S a         = return $ Sf a
@@ -33,6 +35,6 @@ collapse (Sff a b) c = join $ collapse <$> fun <*> val
           val = collapse b c
 
 -- Applies the collapsed expressions to each other
-showEλ :: Aλ -> IO (Eλ)
+showEλ :: Aλ -> IO Eλ
 showEλ (E e)   = return e
 showEλ (A l r) = join $ collapse <$> showEλ l <*> showEλ r
