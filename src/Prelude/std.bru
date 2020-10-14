@@ -69,12 +69,12 @@ formatV3 := λλ (UNL{.[} UNL{.,} fget{n0} UNL{.,} fget{n1} UNL{.]} fget{n2})
 -- makes a program stop
 -- Usage:
 -- (error PRT{doodoo})
-error := UNL{e}
+error := λ (UNL{e} (UNL{r} PRT{***Exception} 0))
 
 -- makes unfinished functions easing to read
 -- div := undefined
 -- running this will make the program to print an error message
-undefined := (UNL{r} PRT{***Exception} PRT{Prelude.std.undefined})
+undefined := (error PRT{Prelude.std.undefined})
 
 -- makes some nested ternary operators
 -- (if statements) prettier
