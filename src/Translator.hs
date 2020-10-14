@@ -4,7 +4,7 @@ module Translator
         ( translate
         , generate
         , compile
-        , toUnl
+        , fromIλ
         , reduceToNormal
         , betaReduce
         ) where
@@ -17,6 +17,7 @@ I drink beer.
 
 ---- Language Import
 import AST
+import ErrorHandler
 import Unlambda.AST
 import Unlambda.Parser -- FIXME #1
 
@@ -38,14 +39,14 @@ toIλ (App _ l r) = App1 (toIλ l) (toIλ r)
 toIλ (Unl     s) = Unl1 s
 
 -- Converts intermediate combinators to their SKI forms.
-fromIλ :: Iλ -> Aλ
-fromIλ S1         = E S
-fromIλ K1         = E K
-fromIλ I1         = E I
-fromIλ (App1 l r) = A (fromIλ l) (fromIλ r)
-fromIλ (Abs1 _)   = error "Translation Error\ndangling abstraction"
-fromIλ (Idx1 _)   = error "Translation Error\nfree index in expression"
-fromIλ (Unl1 s)   = parseLazy s
+fromIλ :: Iλ -> Unlambda
+fromIλ S1         = "s"
+fromIλ K1         = "k"
+fromIλ I1         = "i"
+fromIλ (App1 l r) = '`' : fromIλ l ++ fromIλ r
+fromIλ (Abs1 _)   = failWith "Translation Error\ndangling abstraction"
+fromIλ (Idx1 _)   = failWith "Translation Error\nfree index in expression"
+fromIλ (Unl1 s)   = s
 
 -- Lists the indeces with their "bindedness".
 -- More on this at the VarType definition.
@@ -155,23 +156,11 @@ translate S1 = S1
 translate K1 = K1
 translate I1 = I1
 translate (Unl1 s) = Unl1 s
-translate _  = error "Translation Error: not implemented"
-
--- Turns translated expressions to Unlambda code.
-toUnl :: Iλ -> String
-toUnl (Unl1 s) = s
-toUnl λ  = g (fromIλ λ) where
-    g (E S) = "s"
-    g (E K) = "k"
-    g (E I) = "i"
-    g (A l r) = '`' : g l ++ g r
-    g (E (D s)) = '.' : s
-    g (E V)     = "v"
-    g (E R)     = "r"
+translate _  = failWith "Translation Error: not implemented"
 
 compile :: String -> String
-compile = toUnl . translate . toIλ . parseExpression
+compile = fromIλ . translate . toIλ . parseExpression
 
 generate :: Bλ -> String
-generate = toUnl . translate . toIλ
+generate = fromIλ . translate . toIλ
 

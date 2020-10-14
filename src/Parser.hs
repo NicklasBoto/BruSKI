@@ -19,6 +19,7 @@ import Main.Utf8 (withUtf8)
 import Text.ParserCombinators.Parsec
 
 ---- Language Import
+import ErrorHandler
 import Encoding
 import Config
 import Lexer
@@ -70,7 +71,7 @@ getArity expr = do
     arity <- natural
  
     if (arity > fullArity) && Config.arityBlock then
-        error "Parse Error\narity cannot be higher than the number of binders"
+        failWith "Parse Error\narity cannot be higher than the number of binders"
     else
         return arity
 
@@ -150,12 +151,16 @@ synSugar =  unlP
         <|> prtP
         <|> intP
         <|> chrP
+        <|> eqP
 
 unlP, intP, chrP :: Parser Bλ
 unlP = try $ string "UNL" *> (Unl          <$> braces (many1 (noneOf "}")))
 prtP = try $ string "PRT" *> (toPrint      <$> braces (many1 (noneOf "}")))
 intP = try $ string "INT" *> (encode toInt <$> braces (many1 digit))
 chrP = try $ string "CHR" *> (encode ord   <$> braces anyChar)
+
+eqP :: Parser Bλ
+eqP = try $ string "EQ" *> (Fun "__EQ__" <$> braces (sepBy (wrapSpace expression) comma))
 
 listParser :: Parser Bλ
 listParser =  try unlL 
@@ -210,12 +215,12 @@ pairP :: Parser Bλ
 pairP = toPair <$> angles (sepBy expression comma)
         where toPair :: [Bλ] -> Bλ
               toPair [a, b] = Fun "pair" [a, b]
-              toPair _      = error "Parse Error\ntoo many elements"
+              toPair _      = failWith "Parse Error\ntoo many elements"
 
 ---- User Input, Debug
 parseString :: String -> Sequence
 parseString str = case parse whileParser "String Parser" str of
-                    Left  e -> error $ show e
+                    Left  e -> failWith $ show e
                     Right r -> r
 
 parseFile :: FilePath -> IO Sequence
@@ -228,5 +233,5 @@ parseFile file = withUtf8 $ do
 -- This is really only for debugging and testing purposes
 parseExpression :: String -> Bλ
 parseExpression str = case parse expression "Expression Parser" str of
-                    Left  e -> error $ show e
+                    Left  e -> failWith $ show e
                     Right r -> r
