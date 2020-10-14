@@ -3,9 +3,9 @@
 -- Contact:         nicklasbotö.se
 -- Latest Revision: 16 August 2020
 
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE FlexibleContexts  #-}
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE OverloadedStrings    #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE FlexibleInstances    #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Main where
@@ -26,7 +26,7 @@ import Encoding
 import Generator
 import Translator
 import qualified Sexy
--- import MacroHandler
+import MacroHandler
 
 ---- Parsing and CLI Import
 import Turtle
@@ -316,7 +316,12 @@ importCmd  _  = printr "--- one import at a time, please"
 
 -- Also a shorthand for a language definition
 formatCmd :: [String] -> Repl ()
-formatCmd  λ  = eval $ "{! format " ++ concat λ ++ "!}"
+formatCmd [        ] = infoCmd   ["__FORMATTER__"] 
+formatCmd ["none"  ] = deleteCmd ["__FORMATTER__"]
+formatCmd ["int"   ] = formatCmd ["formatNumLst" ]
+formatCmd ["church"] = formatCmd ["formatChurch" ]
+formatCmd ["bool"  ] = formatCmd ["formatBool"   ]
+formatCmd         λ  = eval $ "{! format " ++ concat λ ++ "!}"
 
 -- Shows the current environment
 envCmd :: [String] -> Repl ()
@@ -421,7 +426,9 @@ ops = [ ("help"  , helpCmd  )
 compl :: (Monad m, MonadState RState m) => WordCompleter m
 compl n = do
   ss <- get
-  return $ filter (isPrefixOf n) ([n | (Assign n _ _ ) <- ss] ++ map ((':':).fst) ops)
+  return $ filter (isPrefixOf n) ([n | (Assign n _ _ ) <- ss]
+        ++ map ((':':).fst) ops
+        ++ ["PRT", "UNL", "INT", "CHR"])
 
 -- Main REPL runner
 -- FIXME should handle errors better.
