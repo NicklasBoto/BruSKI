@@ -21,7 +21,7 @@ hi def link bruMacros Preproc
 hi def link bruLangdef Special
 
 syn keyword bruDeffuncs undefined error
-hi def link bruDeffuncs Function
+hi def link bruDeffuncs Preproc
 
 syn match bruAbs /λ\+/
 hi def link bruAbs Special
