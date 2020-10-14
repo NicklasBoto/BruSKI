@@ -28,7 +28,7 @@ languageDef =
             , Token.identStart      = allChars
             , Token.identLetter     = allChars
             , Token.reservedNames   = ["UNL" ,"INT", "CHR", "PRT"]
-            , Token.reservedOpNames = [":=", "!!", "::", "λ"]
+            , Token.reservedOpNames = [":=", "::", "λ"]
             , Token.caseSensitive   = True
             }
 
