@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b5346e371fd4e823c9166ef6077401ea1c059ed0f173881f00e0d31f61040357
+-- hash: b47fc29111a697c87f70ace9363e09bb193677df22033a826d7b54f5605d7155
 
 name:           BruSKI
 version:        0.9
@@ -34,6 +34,7 @@ library
       Generator
       Lexer
       Lib
+      MacroHandler
       Parser
       Sexy
       Translator
