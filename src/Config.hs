@@ -1,19 +1,5 @@
-module Config
-        ( preludePath
-        , arityBlock
-        ) where
-
-
-{-
-Now I know that this is a poor way to do this...
-But! i wanted to have this functionality in a jiffy, and such
-decided to do it this way temporarily.
--}
-
-
--- Filepath to where BruSKI is installed
-preludePath  = "/home/nicbot/Programming/BruSKI/src/Prelude/"
-
--- Whether or not to allow arity higher that the number of binders
+module Config (preludePath, arityBlock) where
+-- Path to prelude
+preludePath = "/home/nicbot/Programming/BruSKI/src/Prelude/"
+-- Block arities higher than the number of binders
 arityBlock = False
-
