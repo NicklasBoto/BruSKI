@@ -63,14 +63,14 @@ smallBeer = [ "      ~  ~          "
             , " ( )'~~~~~~~'--.    "
             , " ( )|)       |-- \\    BruSKI"
             , "   o| /\\\\    |  \\ \\   DeBruijn -> SKI"
-            , "    |  /\\\\   |   | |  Version 0.9 - August 2020"
+            , "    |  /\\\\   |   | |  Version 1.0 - October 2020"
             , "   o| /  \\\\/ |  / / "
             , "    |        |-/ /    by Nicklas Botö"
             , "    .========.      "
             ]
 
 brewBeerText :: String
-brewBeerText = "\n                                BruSKI\n                           DeBruijn -> SKI\n                       Version 0.9 - August 2020\n                           by Nicklas Botö" 
+brewBeerText = "\n                                BruSKI\n                           DeBruijn -> SKI\n                       Version 1.0 - October 2020\n                           by Nicklas Botö" 
 
 welcomeText :: String
 welcomeText = (intercalate "\n" smallBeer)

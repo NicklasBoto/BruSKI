@@ -7,8 +7,6 @@ Haskell project that aims to show that small abstractions to lambda calculus yie
 And in some part for me to investigate my interest in the interface between lambda calculus and combinatory logic.
 
 ## Installation
-Note that this is in alpha, so expect some bugs and missing features. Feel free to open an issue if you find a bug that is not listed!
-
 First, make sure you have stack installed. You can find it here:
 
 https://docs.haskellstack.org/en/stable/README/#how-to-install

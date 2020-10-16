@@ -455,7 +455,7 @@ parser =  parseMain
 --    <|> parseLee
 
 desc :: Description
-desc = "\n                                bruc\n                         BruSKI -> Unlambda\n                       Version 0.9 - August 2020\n                           by Nicklas Botö"
+desc = "\n                                bruc\n                         BruSKI -> Unlambda\n                     Version 1.0 - October 2020\n                           by Nicklas Botö"
 
 main :: IO ()
 main = join (Turtle.options desc parser)
