@@ -49,9 +49,9 @@ $ bruc
 - [x] [Unl Interpreter Integration](app/Main.hs)
 - [x] [Syntax Highlighting](syntax/BruSKI.vim)
 - [x] [CLI tool](app/Main.hs)
-- [ ] Code Optimization / β-reducer
-- [ ] Isolated DSLs
-- [ ] Lisp Style Macros
+- [x] Code Optimization / β-reducer
+- [x] Isolated DSLs
+- [ ] Lisp Style Macros (BruSKI v2.0)
 
 ## Specification
 
@@ -71,7 +71,7 @@ Expressions are written in de Bruijn indexed lambda calculus. A variable is repr
 
 Functions are called by their name, with their arguments enclosed in curly brackets.
 
-```
+```haskell
 FUNC_NAME{VAR1, VAR2, ...}
 ```
 
@@ -80,7 +80,7 @@ Not applying the full amount of arguments will result in partial application, an
 
 It is perfectly fine to call functions by applying them to each other, in a Haskell-like syntax.
 
-```
+```haskell
 (FUNC_NAME VAR1 VAR2) => ((FUNC_NAME VAR1) VAR2)
 ```
 
@@ -89,7 +89,7 @@ This is semantically equivalent to the previous syntax, but less powerful. This 
 ### The (:=) operator
 Expressions can be assigned to identifiers using the _:=_ operator. This will place the expression in the symbol table after it is expanded.
 
-```
+```haskell
 zero := λλ0 :: 0
 ```
 
@@ -98,27 +98,27 @@ As you might have seen earlier in the file, (::) follow every assignment express
 
 Take the successor function in the church encoding. The expression has three binders (where the two latter ones are used for encoding) but we never want the function to accept more than one argument, the number to increment. Therefore we assign it the arity one, with the (::) operator.
 
-```
+```haskell
 succ := λλλ (1 (2 1 0)) :: 1
 ```
 
 Assigning arities higher than the amount of binders is also possible, but rarely used. One example where this is useful is when η-reducing assignments.
 
-```
+```haskell
 + := λλ add{1, 0} -- non η-reduced
 + := add :: 2     -- η-reduced
 ```
 
-### The (!!) operator
+### Evaluation
 
-Expressions written after the (!!) operator will be evaluated and compiled. Expressions written like this on multiple rows will be concatenated and evaluated as one.
+Expressions written outside assignments will be evaluated and compiled. 
 
-```
+```haskell
 true  := λλ1 :: 0
 false := λλ0 :: 0
 or    := λλ (1 true 0) 
 
-!! or{true, false}
+or{true, false}
 
 {-
 This will evaluate to <k>
@@ -134,7 +134,7 @@ Some built-in "syntactic sugar" functions are included, for ease of use. These i
 
 _INT_ converts natural numbers to their church encoding.
 
-```
+```Haskell
 INT{2} => succ{succ{λλ0}}
 ```
 
@@ -142,7 +142,7 @@ INT{2} => succ{succ{λλ0}}
 
 _CHR_ encodes a character like the Church encoding with its ASCII integer value being encoded.
 
-```
+```haskell
 CHR{d} => INT{100}
 ```
 
@@ -150,7 +150,7 @@ CHR{d} => INT{100}
 
 Because of the clunky syntax, lists can be encoded in the standard `[a, b, c]` way.
 
-```
+```Haskell
 -- These are the same
 list := cons{a, cons{b, cons{c, nil}}}
 list := [a, b, c]
@@ -158,13 +158,13 @@ list := [a, b, c]
 
 Tuples are defined similarly.
 
-```
+```Haskell
 tuple := <a,b>
 ```
 
 You can also map other encoding functions onto lists.
 
-```
+```Haskell
 nums := [INT{1}, INT{2}, INT{3}] -- instead of this
 nums := INT[1, 2, 3]             -- do this
 
@@ -178,7 +178,7 @@ Note that, since these are macros and just expand to other code, you have to inc
 
 Expressions can be written in Unlambda using the _UNL_ function. This enables the programmer to use more powerful features (printing, call-with-current-continuation, input, etc.).
 
-```
+```Haskell
 UNL{```.H.i.!i}
 ```
 
@@ -186,7 +186,7 @@ UNL{```.H.i.!i}
 
 Instead of writing the _.x_ unlambda operator in the _UNL_ function, you can use _PRT_ with a string. This string will be converted to an Unlambda function printing it.
 
-```
+```Haskell
 PRT{BruSKI} => UNL{``````.B.r.u.S.K.Ii}
 ```
 
@@ -194,14 +194,14 @@ PRT{BruSKI} => UNL{``````.B.r.u.S.K.Ii}
 
 The characters _--_ (double dash) denote comments. Multiline comments use the symbol  _{- / -}_.
 
-```
+```Haskell
 -- Ooga booga
 kComb {- the K-combinator -} := λλ 1 :: 2
 ```
 
 ## Example
 
-```
+```haskell
 {! import bools !}
 
 --!-- adder example
@@ -216,9 +216,9 @@ cout    := λλ or { (and 0 1)
 chs := λ (0 UNL{.T} UNL{.F})
 out := λ (chs{0} (λ0)) :: 1
 
-!! out {
-		add{ F , T } --> T, that is 1
-   } 
+out {
+	add{ F , T } --> T, that is 1
+} 
 ```
 
 Another, with syntax highlighting!
@@ -231,7 +231,7 @@ Simplified overview of the compiler.
 ![compover](images/compiler-overview.svg)
 
 The ASTs used in the compiler are described below, in Backus-Naur form.
-```
+```haskell
 -- BruSKI statements
 <Stmt> ::= Assign <String> <Bλ> <Integer> -- (:=)
          | Express <Bλ>			  -- (!!)
