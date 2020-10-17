@@ -9,6 +9,7 @@ if grep "preludePath = " src/Config.hs > /dev/null
 then
         echo "Config exists, skipping..."
 else
+        install -d $PRELUDE
         install -D src/Prelude/* $PRELUDE
         echo "-- Path to prelude" >> src/Config.hs
         echo "preludePath = \"$PRELUDE\"" >> src/Config.hs;
