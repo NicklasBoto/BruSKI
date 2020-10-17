@@ -1,13 +1,13 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a39f8f2f5624f07d2a8040a8586c51c33833a5139e62e6ca7d69b829925727dc
+-- hash: 5ec6c66c6e858d2c1bf86f52377781017894d3cd6232b557926c864757f526ee
 
 name:           BruSKI
-version:        1.0
+version:        1.1
 description:    Please see the README on GitHub at learnbruski.nicklasbotö.se
 homepage:       https://github.com/NicklasBoto/BruSKI#readme
 bug-reports:    https://github.com/NicklasBoto/BruSKI/issues
@@ -19,7 +19,6 @@ license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
-    ChangeLog.md
 
 source-repository head
   type: git
