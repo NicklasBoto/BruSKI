@@ -12,7 +12,7 @@ And in some part for me to investigate my interest in the interface between lamb
 BruSKI is in the AUR! If you have `yay` you can install it with
 
 ```bash
-yay -S bruski
+$ yay -S bruski
 ```
 
 ### Others
