@@ -12,6 +12,7 @@ else
 fi
 
 # ask for vim installation
+echo
 read -p "Install BruSKI for vim? [Y/n]: " ynvim
 case $ynvim in
         [Nn]*) echo "Ok. Skipping...";;
@@ -21,6 +22,7 @@ case $ynvim in
 esac
 
 # install package
+echo
 echo  Installing with stack...
 
 stack install --verbosity error
