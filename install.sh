@@ -26,17 +26,15 @@ case $ynvim in
 esac
 
 # install package
-echo
-echo  Installing with stack...
+echo -e "\nInstalling with stack..."
 
-stack install --verbosity error
-
-if [ "$?" -gt 0 ]; then
-        echo "Stack error..."
-        echo "Please contact nicklas.boto@gmail.com"
-else
+if stack install --verbosity error
+then
         echo "Executable 'bruc' installed to $HOME/.local/bin/bruc"
         echo "Be sure to add ~/.local/bin/ to your PATH."
         echo "Done!"
+else
+        echo "Stack error..."
+        echo "Please contact nicklas.boto@gmail.com"
 fi
 
