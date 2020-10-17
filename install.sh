@@ -1,24 +1,23 @@
 #!/bin/bash
 
 # create config file
-read -p "Create new config (yes if first install)? [y/N]: " yn
-case $yn in
-        [Yy]*)  echo "Setting prelude path...";
-                echo "PATH: $PWD/src/Prelude/"; echo;
-                echo "module Config (preludePath, arityBlock) where" > src/Config.hs;
-                echo "-- Path to prelude" >> src/Config.hs;
-                echo "preludePath = \"$PWD/src/Prelude/\"" >> src/Config.hs;
-                echo "-- Block arities higher than the number of binders" >> src/Config.hs;
-                echo "arityBlock = False" >> src/Config.hs;;
-                
-        *)  echo "Skipping..."; echo;;
-esac
+echo "Creating config..."
+
+if grep "preludePath = " src/Config.hs > /dev/null
+then
+        echo "Config exists, skipping..."
+else
+        echo "-- Path to prelude" >> src/Config.hs
+        echo "preludePath = \"$PWD/src/Prelude/\"" >> src/Config.hs;
+fi
 
 # ask for vim installation
 read -p "Install BruSKI for vim? [Y/n]: " ynvim
 case $ynvim in
         [Nn]*) echo "Ok. Skipping...";;
-        *) bash ./syntax/syntax.sh;;
+        *) cd syntax; 
+           bash syntax.sh;
+           cd ..;
 esac
 
 # install package
