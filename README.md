@@ -7,8 +7,11 @@ Haskell project that aims to show that small abstractions to lambda calculus yie
 And in some part for me to investigate my interest in the interface between lambda calculus and combinatory logic.
 
 ## Installation
-### Arch Linux
+First, make sure you have stack installed. You can find it here:
 
+https://docs.haskellstack.org/en/stable/README/#how-to-install
+
+### Arch Linux
 BruSKI is in the AUR! If you have `yay` you can install it with
 
 ```bash
@@ -16,12 +19,7 @@ $ yay -S bruski
 ```
 
 ### Others
-
-First, make sure you have stack installed. You can find it here:
-
-https://docs.haskellstack.org/en/stable/README/#how-to-install
-
-Then clone this repository and run the install script
+Clone this repository and run the install script
 
 ```
 $ ./install.sh
