@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # create config file
-read -p "Create new config (yes if first install)? [y/n]: " yn
+read -p "Create new config (yes if first install)? [y/N]: " yn
 case $yn in
         [Yy]*)  echo "Setting prelude path...";
                 echo "PATH: $PWD/src/Prelude/"; echo;
@@ -11,7 +11,14 @@ case $yn in
                 echo "-- Block arities higher than the number of binders" >> src/Config.hs;
                 echo "arityBlock = False" >> src/Config.hs;;
                 
-        *)  echo "Skipping...\n";;
+        *)  echo "Skipping..."; echo;;
+esac
+
+# ask for vim installation
+read -p "Install BruSKI for vim? [Y/n]: " ynvim
+case $ynvim in
+        [Nn]*) echo "Ok. Skipping...";;
+        *) bash ./syntax/syntax.sh;;
 esac
 
 # install package
@@ -21,7 +28,7 @@ stack install --verbosity error
 
 if [ "$?" -gt 0 ]; then
         echo "Stack error..."
-        echo "Please contact mail@nicklasbotö.se"
+        echo "Please contact nicklas.boto@gmail.com"
 else
         echo "Executable 'bruc' installed to $HOME/.local/bin/bruc"
         echo "Be sure to add ~/.local/bin/ to your PATH."
