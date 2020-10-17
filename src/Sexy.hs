@@ -1,9 +1,11 @@
 module Sexy ( welcome
             , welcomeText
+            , brewBeerText
             ) where
 
 ---- Format Import
 import Data.List
+import Config
 
 bigBeer :: [String]
 bigBeer = [ "                                                                                          "
@@ -63,14 +65,14 @@ smallBeer = [ "      ~  ~          "
             , " ( )'~~~~~~~'--.    "
             , " ( )|)       |-- \\    BruSKI"
             , "   o| /\\\\    |  \\ \\   DeBruijn -> SKI"
-            , "    |  /\\\\   |   | |  Version 1.0 - October 2020"
+            , "    |  /\\\\   |   | |  Version " ++ versionString
             , "   o| /  \\\\/ |  / / "
             , "    |        |-/ /    by Nicklas Botö"
             , "    .========.      "
             ]
 
 brewBeerText :: String
-brewBeerText = "\n                                BruSKI\n                           DeBruijn -> SKI\n                       Version 1.0 - October 2020\n                           by Nicklas Botö" 
+brewBeerText = "\n                                BruSKI\n                           DeBruijn -> SKI\n                       Version " ++ versionString ++ "\n                           by Nicklas Botö" 
 
 welcomeText :: String
 welcomeText = (intercalate "\n" smallBeer)

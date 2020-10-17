@@ -1,7 +1,7 @@
 -- bruc, The BruSKI Compiler
 -- Maintainer:      Nicklas Botö
 -- Contact:         nicklasbotö.se
--- Latest Revision: 16 August 2020
+-- Latest Revision: 17 October 2020
 
 {-# LANGUAGE OverloadedStrings    #-}
 {-# LANGUAGE FlexibleContexts     #-}
@@ -48,6 +48,9 @@ import Data.Char
 import Data.Version (showVersion)
 
 
+-- save version as string
+ver :: String
+ver = showVersion version
 
 -- main parser
 mainSubroutine :: IO ()
@@ -110,7 +113,7 @@ genParser = fmap genFromFile (subcommand "gen" "Generate symbol table and compil
 
 -- version parser
 version' :: IO()
-version' = putStrLn (showVersion version)
+version' = putStrLn ver
 
 verboseVersion :: IO()
 verboseVersion = do
@@ -455,7 +458,7 @@ parser =  parseMain
 --    <|> parseLee
 
 desc :: Description
-desc = "\n                                bruc\n                         BruSKI -> Unlambda\n                     Version 1.0 - October 2020\n                           by Nicklas Botö"
+desc = fromString Sexy.brewBeerText
 
 main :: IO ()
 main = join (Turtle.options desc parser)
