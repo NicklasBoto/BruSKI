@@ -237,7 +237,7 @@ Simplified overview of the compiler.
 ![compover](images/compiler-overview.svg)
 
 The ASTs used in the compiler are described below, in Backus-Naur form.
-```haskell
+```
 -- BruSKI statements
 <Stmt> ::= Assign <String> <Bλ> <Integer> -- (:=)
          | Express <Bλ>			  -- (!!)
@@ -264,7 +264,7 @@ The ASTs used in the compiler are described below, in Backus-Naur form.
            | <alphaNumeric>
 	   | "{-"  | "-}   | "--"
 	   | "UNL" | "INT" | "CHR" | "PRT"
-	   | ":="  | "!!"  | "::"  | "λ"
+	   | ":="  | "::"  | "λ"
 	   | " "   | "()"  | "{}"  | "[]" | "<>" | ","
 ```
 
