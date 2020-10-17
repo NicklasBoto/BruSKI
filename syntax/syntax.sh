@@ -29,7 +29,7 @@ else
         install -Dm644 "BruSKI.vim" $SXFILE
 fi
 
-if grep -Eq "inoremap.+λ" "$HOME/.vimrc"
+if grep -Eqs "inoremap.+λ" "$HOME/.vimrc"
 then
         echo "Lambda macro already exists, skipping..."
 else

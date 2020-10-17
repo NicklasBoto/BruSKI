@@ -3,12 +3,15 @@
 # create config file
 echo "Creating config..."
 
+PRELUDE="$HOME/.config/bruski/prelude/"
+
 if grep "preludePath = " src/Config.hs > /dev/null
 then
         echo "Config exists, skipping..."
 else
+        install -D src/Prelude/* $PRELUDE
         echo "-- Path to prelude" >> src/Config.hs
-        echo "preludePath = \"$PWD/src/Prelude/\"" >> src/Config.hs;
+        echo "preludePath = \"$PRELUDE\"" >> src/Config.hs;
 fi
 
 # ask for vim installation
