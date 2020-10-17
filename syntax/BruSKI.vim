@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language: BruSKI
 " Maintainer: Nicklas Botö
-" Latest Revision: 27 July 2020
+" Latest Revision: 17 October 2020
 
 if exists("b:current_syntax")
     finish

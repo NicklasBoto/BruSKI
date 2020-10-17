@@ -1,17 +1,32 @@
-echo "Installing BruSKI for vim..."
+FTFILE="$HOME/.vim/ftdetect/bru.vim"
+SXFILE="$HOME/.vim/syntax/BruSKI.vim"
 
-if diff bru.vim ~/.vim/ftdetect/bru.vim > /dev/null 
+if [ -f "$FTFILE" ]
 then
-        echo "Latest ftdetect already installed, skipping..."
+        if diff bru.vim $FTFILE > /dev/null
+        then
+                echo "Latest ftdetect already installed, skipping..."
+        else
+                echo "Updating ftdetect file..."
+                install -Dm644 "bru.vim" $FTFILE
+        fi
 else
-        install -Dm644 "bru.vim" "$HOME/.vim/ftdetect/bru.vim"
+        echo "Creating ftdetect file..."
+        install -Dm644 "bru.vim" $FTFILE
 fi
 
-if diff BruSKI.vim ~/.vim/syntax/BruSKI.vim > /dev/null
+if [ -f "$SXFILE" ]
 then
-        echo "Latest syntax file already installed, skipping..."
+        if diff BruSKI.vim $SXFILE > /dev/null
+        then
+                echo "Latest syntax file already installed, skipping..."
+        else
+                echo "Updating syntax file..."
+                install -Dm644 "BruSKI.vim" $SXFILE
+        fi
 else
-        install -Dm644 "BruSKI.vim" "$HOME/.vim/syntax/BruSKI.vim"
+        echo "Creating syntax file..."
+        install -Dm644 "BruSKI.vim" $SXFILE
 fi
 
 if grep -Eq "inoremap.+λ" "$HOME/.vimrc"

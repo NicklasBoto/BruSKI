@@ -9,6 +9,3 @@ versionString = showVersion version ++ " - October 2020"
 -- Block arities higher than the number of binders
 arityBlock = False
 
--- Path to prelude
-preludePath = "/home/nicbot/Programming/BruSKI/src/Prelude/"
-
