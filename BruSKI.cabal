@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5ec6c66c6e858d2c1bf86f52377781017894d3cd6232b557926c864757f526ee
+-- hash: dba111c1a12c5ed7f0ad15b2606c8ce2a7bb9a295d0f81d654bd2c0a552f3d92
 
 name:           BruSKI
 version:        1.1
@@ -12,7 +12,7 @@ description:    Please see the README on GitHub at learnbruski.nicklasbotö.se
 homepage:       https://github.com/NicklasBoto/BruSKI#readme
 bug-reports:    https://github.com/NicklasBoto/BruSKI/issues
 author:         Nicklas Botö
-maintainer:     nicklas.boto@gmail.com
+maintainer:     bruski@nicklasbotö.se
 copyright:      BruSKI  Copyright (C) 2020  Nicklas Botö
 license:        GPL
 license-file:   LICENSE

@@ -1,6 +1,6 @@
 -- bruc, The BruSKI Compiler
 -- Maintainer:      Nicklas Botö
--- Contact:         nicklasbotö.se
+-- Contact:         bruski@nicklasbotö.se
 -- Latest Revision: 17 October 2020
 
 {-# LANGUAGE OverloadedStrings    #-}
@@ -118,7 +118,7 @@ version' = putStrLn ver
 verboseVersion :: IO()
 verboseVersion = do
                  version'
-                 echo "This compiler is currently in development! Please notify me at [mail@nicklasbotö.se], or open an issue at [bruski.nicklasbotö.se] if you want a certain feature."
+                 echo "This compiler is currently in development! Please notify me at [bruski@nicklasbotö.se], or open an issue at [bruski.nicklasbotö.se] if you want a certain feature."
 
 parseVersion :: Parser (IO ())
 parseVersion = subcommand "version" "Show compiler version" (pure verboseVersion)
