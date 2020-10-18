@@ -12,10 +12,10 @@ First, make sure you have stack installed. You can find it here:
 https://docs.haskellstack.org/en/stable/README/#how-to-install
 
 ### Arch Linux
-BruSKI is in the AUR! If you have `yay` you can install it with
+BruSKI is in the [AUR](https://aur.archlinux.org/packages/bruski-git/)! If you have `yay` you can install it with
 
 ```bash
-$ yay -S bruski
+$ yay -S bruski-git
 ```
 
 ### Others
