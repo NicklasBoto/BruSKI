@@ -3,26 +3,24 @@
 # create config file
 echo "Creating config..."
 
-PRELUDE="$HOME/.config/bruski/prelude/"
+_PRELUDE="$PWD/src/Prelude/"
 
 if grep "preludePath = " src/Config.hs > /dev/null
 then
         echo "Config exists, skipping..."
 else
-        install -d $PRELUDE
-        install -D src/Prelude/* $PRELUDE
         echo "-- Path to prelude" >> src/Config.hs
-        echo "preludePath = \"$PRELUDE\"" >> src/Config.hs;
+        echo "preludePath = \"$_PRELUDE\"" >> src/Config.hs;
 fi
 
 # ask for vim installation
 echo
-read -p "Install BruSKI for vim? [Y/n]: " ynvim
-case $ynvim in
-        [Nn]*) echo "Ok. Skipping...";;
-        *) cd syntax; 
-           bash syntax.sh;
-           cd ..;
+read -p "Install BruSKI for vim? [y/N]: " _yn
+case $_yn in
+        [Yy]*) cd syntax; 
+               bash syntax.sh;
+               cd ..;;
+        *) echo "Ok. Skipping...";;
 esac
 
 # install package
@@ -35,6 +33,6 @@ then
         echo "Done!"
 else
         echo "Stack error..."
-        echo "Please contact nicklas.boto@gmail.com"
+        echo "Please contact bruski@nicklasbotö.se"
 fi
 

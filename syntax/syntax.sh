@@ -1,6 +1,8 @@
 FTFILE="$HOME/.vim/ftdetect/bru.vim"
 SXFILE="$HOME/.vim/syntax/BruSKI.vim"
 
+# maybe use the -C flag for install instead of these checks
+
 if [ -f "$FTFILE" ]
 then
         if diff bru.vim $FTFILE > /dev/null
