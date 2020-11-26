@@ -205,6 +205,43 @@ The characters _--_ (double dash) denote comments. Multiline comments use the sy
 kComb {- the K-combinator -} := λλ 1 :: 2
 ```
 
+### Compile time reductions
+
+Application expressions will be β-reduced during code generation. This will simplify most expressions but in some cases code may become slower. Some expressions may also not terminate during reduction (certain fixed point combinators). To bypass this β-reducer, put `'` before the application expression.
+
+#### Speed example
+```haskell
+{!
+import std
+format formatChurch
+!}
+
+x :=  (^ n2 n10)
+y := '(^ n2 n10) -- this will make the printing in 'formatChurch' faster
+```
+
+#### Non-termination example
+Using Klop's fixed point combinator,
+
+L = λa.λb.λc.λd.λe.λf.λg.λh.λi.λj.λk.λl.λm.λn.λo.λp.λq.λs.λt.λu.λv.λw.λx.λy.λz.λr.(r (t h i s i s a f i x e d p o i n t c o m b i n a t o r))
+
+```haskell
+L     := λλλλλλλλλλλλλλλλλλλλλλλλλλλ (0 (7 18 17 8 17 8 25 20 17 3 21 22 10 11 17 12 7 23 11 13 24 17 12 25 7 11 0))
+Yklop := (L L L L L L L L L L L L L L L L L L L L L L L L L L) -- stuck here
+```
+
+The above code will not terminate, since this fixed point combinator will reduce forever. A normal Y-combinator howver, does terminate.
+Adding the non-reduction syntax will make the program compile.
+
+```haskell
+L     := λλλλλλλλλλλλλλλλλλλλλλλλλλλ (0 (7 18 17 8 17 8 25 20 17 3 21 22 10 11 17 12 7 23 11 13 24 17 12 25 7 11 0))
+Yklop := '(L L L L L L L L L L L L L L L L L L L L L L L L L L)
+
+Yklop
+```
+
+And produces this [hellish code](test/klop.unl). Improving this is left as an exercise for the suffering reader.
+
 ## Example
 
 ```haskell
@@ -236,31 +273,35 @@ Another, with syntax highlighting!
 Simplified overview of the compiler.
 ![compover](images/compiler-overview.svg)
 
-The ASTs used in the compiler are described below, in Backus-Naur form.
+The grammar is loosely described below, in Backus-Naurish form.
 ```
 -- BruSKI statements
-<Stmt> ::= Assign <String> <Bλ> <Integer> -- (:=)
-         | Express <Bλ>			  -- (!!)
-	 | Import <String>		  -- (import)
+<Stmt> ::= <String> := <Bλ> :: <Integer>
+         | <Bλ>	               		
+	 | <PreProc>
+	 
+<PreProc> ::= {! import <String> !}
+            | {! format <String> !} 
 
 -- DeBruijn statements
-<Bλ> ::= Idx <Integer>       -- DeBruijn indeces
-       | Abs <Bλ>            -- Lambda abstractions
-       | App <Bλ> <Bλ>       -- Application
-       | Unl <String>        -- Unlambda injection
-       | Fun <String> [<Bλ>] -- Functions
+<Bλ> ::= <Integer>                -- DeBruijn indeces
+       | λ <Bλ>                   -- Lambda abstractions
+       | (<Bλ> <[Bλ]>)            -- Application
+       | UNL{<String>}            -- Unlambda injection
+       | <String>{ <Bλ>, <[Bλ]> } -- Functions
+
+--!-- Other structures
 
 -- Intermediate representation
 -- a mix of DeBruijn and SKI terms
 <Iλ> ::= <Bλ> | S | K | I
 
---!-- Other structures
-
 -- Entries in the symbol table
-<Symbol> ::= (<String>, (<Bλ>, <Int>))
+<Symbol> := (<String>, (<Bλ>, <Int>))
+       --^
 
 -- Lexed tokens
-<Token>  ::= "∧∨⇔↔⇒→⊕⊻⩒¬←∀⋀∃⋁⩒∄⊢⊨⊤⊥∴∵∇∆∫∮≤≥≠±∓ℵℶ𝔠ℕℤℚℝℂ⊂⊆∈∉∅+*^αβδεφγηιθκμνοπχρστυξψζΑΒΔΕΦΓΗΙΘΚΛΜΝΟΠΧΡΣΤΥΞΨΖ" 
+<Token>  ::= ["∧∨⇔↔⇒→⊕⊻⩒¬←∀⋀∃⋁⩒∄⊢⊨⊤⊥∴∵∇∆∫∮≤≥≠±∓ℵℶ𝔠ℕℤℚℝℂ⊂⊆∈∉∅+*^αβδεφγηιθκμνοπχρστυξψζΑΒΔΕΦΓΗΙΘΚΛΜΝΟΠΧΡΣΤΥΞΨΖ"]
            | <alphaNumeric>
 	   | "{-"  | "-}   | "--"
 	   | "UNL" | "INT" | "CHR" | "PRT"
