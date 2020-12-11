@@ -292,7 +292,7 @@ helpCmd ["?"     ] = printr "Usage: ? [COMMAND]\nshow available commands, or inf
 helpCmd ["quit"  ] = printr "Usage: quit\nquits the repl"
 helpCmd ["import"] = printr "Usage: import FILENAME\nshorthand for '{! import FILENAME !}'"
 helpCmd ["format"] = printr "Usage: format VARNAME\nshorthand for '{! format VARNAME !}'"
-helpCmd ["env"   ] = printr "Usage: env\nshows the current environment"
+helpCmd ["env"   ] = printr "Usage: env [ENV]\nshows the current environment, or sets the current environment\n\tENV ::= church | num | bool"
 helpCmd ["clear" ] = printr "Usage: clear\nclear the current environment"
 helpCmd ["delete"] = printr "Usage: delete VARNAME\ndeletes a statement from the environment"
 helpCmd ["info"  ] = printr "Usage: info VARNAME\nshow the definition of VARNAME"
@@ -329,6 +329,8 @@ formatCmd         λ  = eval $ "{! format " ++ concat λ ++ "!}"
 -- Shows the current environment
 envCmd :: [String] -> Repl ()
 envCmd ["church"] = importCmd ["church"] *> formatCmd ["formatChurch"]
+envCmd ["num"   ] = importCmd ["std"   ] *> formatCmd ["formatNumLst"]
+envCmd ["bool"  ] = importCmd ["bool"  ] *> formatCmd ["formatBool"  ]
 envCmd     _      = get >>= printr . show
 
 -- Cleares the current environment
